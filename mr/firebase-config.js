@@ -1,9 +1,9 @@
 // Import Firebase from CDN (No npm install needed)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";  // ← ADD THIS
 
 // Your web app's Firebase configuration
-// REPLACE THESE WITH YOUR REAL KEYS FROM FIREBASE CONSOLE
 const firebaseConfig = {
   apiKey: "AIzaSyB28aM-sFFr8n1CiSiVdUcTkKDlo4b9orY",
   authDomain: "jyoti-landing-pages-2.firebaseapp.com",
@@ -17,5 +17,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);  // ← ADD THIS
 
-export { db };
+export { db, auth };  // ← EXPORT BOTH
