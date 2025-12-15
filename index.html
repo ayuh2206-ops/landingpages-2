@@ -117,7 +117,8 @@
             const [leads, setLeads] = useState([]);
 
             const getLeadsCollection = () => firestoreFuncs.collection(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION);
-            const getSettingsDoc = () => firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', SETTINGS_DOC_ID);
+            // FIX: Added 'config' collection to make path have 6 segments (Even number)
+            const getSettingsDoc = () => firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', 'config', SETTINGS_DOC_ID);
 
             useEffect(() => {
                 if (isOffline || !db) return;
