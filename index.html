@@ -234,6 +234,61 @@
                 }
             };
 
+            const handleDeleteLead = async (id) => {
+                if (confirm("Delete this lead?")) {
+                    try {
+                        await firestoreFuncs.deleteDoc(firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION, id));
+                        fetchLeads();
+                    } catch (e) {
+                        alert("Failed to delete: " + e.message);
+                    }
+                }
+            };
+
+            const LeadItem = ({ lead, onDelete, onUpdate }) => {
+                const [isEditing, setIsEditing] = useState(false);
+                const [editData, setEditData] = useState({ name: lead.name, phone: lead.phone, email: lead.email });
+                
+                const handleSave = async () => {
+                    try {
+                        await firestoreFuncs.updateDoc(firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION, lead.id), editData);
+                        setIsEditing(false);
+                        onUpdate();
+                    } catch (e) {
+                        alert("Failed to update: " + e.message);
+                    }
+                };
+
+                if (isEditing) {
+                    return (
+                        <div className="p-3 border-b border-slate-100 last:border-0 bg-blue-50 space-y-2">
+                            <input type="text" value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} className="w-full p-1.5 border rounded text-sm" placeholder="Name" />
+                            <input type="tel" value={editData.phone} onChange={(e) => setEditData({...editData, phone: e.target.value})} className="w-full p-1.5 border rounded text-sm" placeholder="Phone" />
+                            <input type="email" value={editData.email} onChange={(e) => setEditData({...editData, email: e.target.value})} className="w-full p-1.5 border rounded text-sm" placeholder="Email" />
+                            <div className="flex gap-2 pt-1">
+                                <button onClick={handleSave} className="flex-1 bg-green-500 text-white py-1.5 rounded text-xs font-medium">Save</button>
+                                <button onClick={() => setIsEditing(false)} className="px-3 py-1.5 text-slate-500 text-xs">Cancel</button>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="p-3 border-b border-slate-100 last:border-0 hover:bg-white text-sm group">
+                        <div className="flex justify-between items-start">
+                            <div className="font-bold text-slate-700">{lead.name}</div>
+                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => setIsEditing(true)} className="text-blue-400 hover:text-blue-600 p-1"><Edit2 size={12}/></button>
+                                <button onClick={() => onDelete(lead.id)} className="text-red-400 hover:text-red-600 p-1"><Trash2 size={12}/></button>
+                            </div>
+                        </div>
+                        <div className="text-slate-500 text-xs">{lead.phone}</div>
+                        <div className="text-slate-400 text-xs">{lead.email}</div>
+                        <div className="text-slate-300 text-xs mt-1">{new Date(lead.registeredAt).toLocaleDateString()}</div>
+                    </div>
+                );
+            };
+
             const TestimonialForm = ({ onSave, onCancel }) => {
                 const [formData, setFormData] = useState({ name: '', role: '', text: '', imageUrl: '' });
                 const handleSubmit = () => {
@@ -281,9 +336,12 @@
                                     <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">English Leads ({leads.length})</h3>
                                     <button onClick={fetchLeads} className="text-xs text-[var(--accent)] hover:underline">Refresh</button>
                                 </div>
-                                <div className="bg-slate-50 rounded border border-slate-100 max-h-60 overflow-y-auto">
-                                    {leads.length===0 ? <p className="p-4 text-xs text-slate-400 text-center">No leads yet.</p> : leads.map(l => ( <div key={l.id} className="p-3 border-b border-slate-100 last:border-0 hover:bg-white text-sm"><div className="font-bold text-slate-700">{l.name}</div><div className="text-slate-500 text-xs flex justify-between"><span>{l.phone}</span><span className="text-slate-300">{new Date(l.registeredAt).toLocaleDateString()}</span></div></div> ))}
+                                <div className="bg-slate-50 rounded border border-slate-100 max-h-72 overflow-y-auto">
+                                    {leads.length===0 ? <p className="p-4 text-xs text-slate-400 text-center">No leads yet.</p> : leads.map(l => (
+                                        <LeadItem key={l.id} lead={l} onDelete={handleDeleteLead} onUpdate={fetchLeads} />
+                                    ))}
                                 </div>
+                                {leads.length > 0 && <p className="text-xs text-slate-400 mt-2 text-center">Hover over a lead to edit or delete</p>}
                             </div>
                             <div>
                                 <div className="flex justify-between items-center mb-3">
