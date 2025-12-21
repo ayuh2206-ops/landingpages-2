@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -14,16 +13,16 @@
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] },
                     colors: { primary: '#233D4D', accent: '#E86C3F', surface: '#F8F9FA', warm: '#FFF5F0', glass: 'rgba(255, 255, 255, 0.8)' },
-                    animation: { 'fade-up': 'fadeUp 0.8s ease-out forwards', 'fade-in': 'fadeIn 0.5s ease-out' },
-                    keyframes: { fadeUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }, fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } } }
+                    animation: { 'fade-up': 'fadeUp 0.8s ease-out forwards', 'fade-in': 'fadeIn 0.5s ease-out', 'pulse-glow': 'pulseGlow 2s infinite' },
+                    keyframes: { 
+                        fadeUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }, 
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        pulseGlow: { '0%, 100%': { boxShadow: '0 0 5px #E86C3F, 0 0 10px #E86C3F' }, '50%': { boxShadow: '0 0 20px #E86C3F, 0 0 30px #E86C3F' } }
+                    }
                 }
             }
         }
     </script>
-    <script type="importmap">
-    { "imports": { "react": "https://esm.sh/react@18.2.0", "react-dom/client": "https://esm.sh/react-dom@18.2.0/client", "lucide-react": "https://esm.sh/lucide-react@0.300.0", "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js", "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js", "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js" } }
-    </script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <title>Dnyanjyoti Education | 120+ Marks Strategy Workshop</title>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #FFFFFF; color: #4A4A4A; }
@@ -37,6 +36,17 @@
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #E86C3F; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"></script>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.min.js"></script>
 </head>
 <body>
     <div id="root">
@@ -46,24 +56,39 @@
         </div>
     </div>
     <script type="text/babel" data-type="module">
-        import React, { useState, useEffect, useRef } from 'react';
-        import { createRoot } from 'react-dom/client';
-        import { CheckCircle, Play, Pause, MessageCircle, Send, ChevronRight, Download, ShieldCheck, Settings, Lock, Unlock, Video, X, Star, Zap, Target, Book, Brain, Scale, FileText, Eye, RotateCcw, Instagram, Facebook, Users, ArrowLeft, Trash2, Edit2, Home, MapPin, Calendar, HelpCircle, TrendingUp } from 'lucide-react';
+        const { useState, useEffect, useRef } = React;
+        const { 
+            CheckCircle, Play, Pause, MessageCircle, Send, ChevronRight, Download, 
+            ShieldCheck, Settings, Lock, Unlock, Video, X, Star, Zap, Target, 
+            Book, Brain, Scale, FileText, Eye, RotateCcw, Instagram, Facebook, 
+            Users, ArrowLeft, Trash2, Edit2, Home, MapPin, Calendar, HelpCircle, TrendingUp, Quote, Plus 
+        } = LucideReact;
 
-        let db = null; let auth = null; let firestoreFuncs = {};
-        
-        // --- SHARED CONFIGURATION ---
-        const APP_ID = 'dnyanjyoti_v2';
-        const SETTINGS_DOC_ID = 'settings_global'; // SHARED: Both pages read this
-        const LEADS_COLLECTION = 'leads_english';  // UNIQUE: English leads only
+        // --- FIREBASE SETUP ---
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth.getAuth(app);
+        const db = firebase.firestore.getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
+        // Collections
+        const LEADS_COLLECTION = 'leads_english'; 
+        const SETTINGS_DOC_ID = 'settings_global';
+        const TESTIMONIALS_COLLECTION = 'testimonials_english';
+
+        // --- CONSTANTS ---
         const t = {
             heroSubtitle: "Our students have already proven it.",
             heroTitle1: "Who says 120+ Marks",
             heroTitle2: "Are Not Possible?",
-            heroDesc: "MPSC RAJYASEVA PRELIMS 2026 | UPSC CSE PRELIMS 2026. An extremely important free workshop.",
+            heroExams: [
+                "MPSC RAJYASEVA PRELIMS 2026",
+                "UPSC CSE PRELIMS 2026",
+                "An extremely important free workshop"
+            ],
             heroFeature: "Includes Residential & Food Facilities",
             secureSpot: "Register Now",
+            freeMaterial: "Register to get free study material",
             stat1: "Years Experience", stat2: "Officers Guided", stat3: "Selections", stat4: "Centers",
             whyTitle: "Why Attend This Workshop?",
             whySubtitle: "Critical strategy changes for your 2026 attempt.",
@@ -74,6 +99,10 @@
                 { icon: <CheckCircle size={20}/>, text: "Proper use of Test Series, Smart Revision, and correct Elimination techniques." },
                 { icon: <Star size={20}/>, text: "A golden opportunity for students in the final year of graduation." }
             ],
+            mentorTitle: "Meet Your Mentor",
+            mentorName: "Dr. Vishal Bhedurkar",
+            mentorRole: "Finance and Account Officer, Maharashtra State Government",
+            mentorQuote: "Success is not about reading more. It is about thinking clearly.",
             agendaTitle: "What Will You Get?",
             agendaSubtitle: "Workshop Deliverables",
             agendaList: [
@@ -84,9 +113,9 @@
                 { icon: <Zap size={20}/>, title: "Smart Elimination", desc: "Logical guessing methods that work." },
                 { icon: <HelpCircle size={20}/>, title: "Weak Subjects", desc: "Special focus on student weak areas." }
             ],
-            mentorQuote: "Success is not about reading more. It is about thinking clearly.",
             formTitle: "Registration", formSubtitle: "Secure your spot for the 2026 Strategy Workshop.", formButton: "Register Now",
             thankYouTitle: "Registration Confirmed", thankYouDesc: "We have reserved your spot for the workshop.",
+            testimonialsTitle: "What Students Say",
             name: "Full Name", email: "Email Address", phone: "Phone Number",
             watchFirst: "Watch This First", nextSteps: "Next Steps", joinWhatsApp: "Join WhatsApp Group", joinGroup: "Join Group", followUpdates: "Follow for Updates"
         };
@@ -96,59 +125,116 @@
             videoConfig: { type: 'none', src: '', title: 'Message from Dr. Vishal' },
             pdfConfig: { url: '', title: 'Study Material PDF' },
             socialLinks: { whatsapp: '#', telegram: '#', instagram: '#', facebook: '#' },
-            adminPasskey: '' // Empty triggers Setup Mode
+            adminPasskey: '' 
         };
 
-        const GlassCard = ({ children, className = "" }) => ( <div className={`glass-panel rounded-lg p-6 md:p-8 hover:shadow-lg transition-all duration-500 ${className}`}>{children}</div> );
-        const SectionHeader = ({ title, subtitle, align = "center", light = false }) => ( <div className={`mb-16 ${align === 'center' ? 'text-center' : 'text-left'}`}><h2 className={`text-3xl md:text-4xl font-serif font-bold mb-4 ${light ? 'text-white' : 'text-[var(--primary)]'}`}>{title}</h2><div className={`h-1 w-16 bg-[var(--accent)] mb-4 ${align === 'center' ? 'mx-auto' : ''}`}></div>{subtitle && <p className={`font-light text-lg ${light ? 'text-slate-300' : 'text-[var(--text-body)]'}`}>{subtitle}</p>}</div> );
-        
+        const GlassCard = ({ children, className = "" }) => ( <div className={`glass-panel rounded-lg p-5 md:p-6 hover:shadow-lg transition-all duration-500 ${className}`}>{children}</div> ); // Reduced padding
+        const SectionHeader = ({ title, subtitle, align = "center", light = false }) => ( <div className={`mb-10 ${align === 'center' ? 'text-center' : 'text-left'}`}><h2 className={`text-3xl md:text-4xl font-serif font-bold mb-3 ${light ? 'text-white' : 'text-[var(--primary)]'}`}>{title}</h2><div className={`h-1 w-16 bg-[var(--accent)] mb-3 ${align === 'center' ? 'mx-auto' : ''}`}></div>{subtitle && <p className={`font-light text-lg ${light ? 'text-slate-300' : 'text-[var(--text-body)]'}`}>{subtitle}</p>}</div> );
+
         const CustomVideoPlayer = ({ videoSource }) => {
-            const videoRef = useRef(null); const [isPlaying, setIsPlaying] = useState(false); const [showControls, setShowControls] = useState(true);
-            const togglePlay = () => { if (videoRef.current) { isPlaying ? videoRef.current.pause() : videoRef.current.play(); setIsPlaying(!isPlaying); } };
-            return ( <div className="relative w-full aspect-video group bg-black rounded-lg overflow-hidden shadow-2xl border-4 border-white" onMouseEnter={() => setShowControls(true)} onMouseLeave={() => isPlaying && setShowControls(false)}>{!videoSource.src ? ( <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-500"><Video size={48} className="mb-4 opacity-50" /><p>No Video Configured</p></div> ) : ( <video ref={videoRef} src={videoSource.src} className="w-full h-full object-cover" onClick={togglePlay} onEnded={() => setIsPlaying(false)} playsInline /> )}{showControls && videoSource.src && ( <div className="absolute inset-0 bg-black/40 flex flex-col justify-between p-6 transition-opacity duration-300"><div className="absolute inset-0 flex items-center justify-center pointer-events-none"><button onClick={togglePlay} className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center pointer-events-auto hover:scale-110 transition-transform">{isPlaying ? <Pause className="fill-white text-white ml-1" /> : <Play className="fill-white text-white ml-1" />}</button></div><div className="mt-auto pointer-events-none"><p className="text-white font-bold text-lg drop-shadow-md">{videoSource.title}</p></div></div> )}</div> );
+            const videoRef = useRef(null); 
+            const [isPlaying, setIsPlaying] = useState(false); 
+            const [showControls, setShowControls] = useState(true);
+            const togglePlay = () => { 
+                if (videoRef.current) { 
+                    isPlaying ? videoRef.current.pause() : videoRef.current.play(); 
+                    setIsPlaying(!isPlaying); 
+                } 
+            };
+            return ( 
+                <div className="relative w-full aspect-video group bg-black rounded-lg overflow-hidden shadow-2xl border-4 border-white" onMouseEnter={() => setShowControls(true)} onMouseLeave={() => isPlaying && setShowControls(false)}>
+                    {!videoSource.src ? ( 
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-500">
+                            <Video size={48} className="mb-4 opacity-50" />
+                            <p>No Video Configured</p>
+                        </div> 
+                    ) : ( 
+                        <video ref={videoRef} src={videoSource.src} className="w-full h-full object-cover" onClick={togglePlay} onEnded={() => setIsPlaying(false)} playsInline /> 
+                    )}
+                    {showControls && videoSource.src && ( 
+                        <div className="absolute inset-0 bg-black/40 flex flex-col justify-between p-6 transition-opacity duration-300">
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <button onClick={togglePlay} className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center pointer-events-auto hover:scale-110 transition-transform">
+                                    {isPlaying ? <Pause className="fill-white text-white ml-1" /> : <Play className="fill-white text-white ml-1" />}
+                                </button>
+                            </div>
+                            <div className="mt-auto pointer-events-none"><p className="text-white font-bold text-lg drop-shadow-md">{videoSource.title}</p></div>
+                        </div> 
+                    )}
+                </div> 
+            );
         };
 
-        const App = ({ isOffline }) => {
+        const App = () => {
             const [currentPage, setCurrentPage] = useState('landing');
             const [settings, setSettings] = useState(DEFAULT_SETTINGS);
             const [isAdmin, setIsAdmin] = useState(false);
             const [showLogin, setShowLogin] = useState(false);
             const [passkeyInput, setPasskeyInput] = useState('');
             const [leads, setLeads] = useState([]);
+            const [testimonials, setTestimonials] = useState([]);
+            const [user, setUser] = useState(null);
 
-            const getLeadsCollection = () => firestoreFuncs.collection(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION);
-            // FIX: Added 'config' collection to make path have 6 segments (Even number)
-            const getSettingsDoc = () => firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', 'config', SETTINGS_DOC_ID);
+            // Paths
+            const getSettingsDoc = () => firebase.firestore.doc(db, 'artifacts', appId, 'public', 'data', 'config', SETTINGS_DOC_ID);
+            const getLeadsCollection = () => firebase.firestore.collection(db, 'artifacts', appId, 'public', 'data', LEADS_COLLECTION);
+            const getTestimonialsCollection = () => firebase.firestore.collection(db, 'artifacts', appId, 'public', 'data', TESTIMONIALS_COLLECTION);
+
+            // Auth & Settings Init
             useEffect(() => {
-                if (isOffline || !db) return;
-                const doAuth = async () => {
+                const initAuth = async () => {
                     try {
-                        const { signInAnonymously } = await import('firebase/auth');
-                        await signInAnonymously(auth);
-                        const unsubscribe = firestoreFuncs.onSnapshot(getSettingsDoc(), (doc) => {
-                            if (doc.exists()) setSettings(prev => ({ ...prev, ...doc.data() }));
-                        });
-                        return () => unsubscribe();
-                    } catch (err) { console.error("Auth Failed", err); }
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await firebase.auth.signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await firebase.auth.signInAnonymously(auth);
+                        }
+                    } catch (e) {
+                        console.error("Auth error:", e);
+                    }
                 };
-                doAuth();
-            }, [isOffline]);
+                initAuth();
+
+                const unsubscribeAuth = firebase.auth.onAuthStateChanged(auth, (u) => {
+                    setUser(u);
+                });
+                return () => unsubscribeAuth();
+            }, []);
+
+            // Data Fetching
+            useEffect(() => {
+                if (!user) return;
+                
+                // Settings
+                const unsubSettings = firebase.firestore.onSnapshot(getSettingsDoc(), (doc) => {
+                    if (doc.exists()) setSettings(prev => ({ ...prev, ...doc.data() }));
+                    else firebase.firestore.setDoc(getSettingsDoc(), DEFAULT_SETTINGS).catch(console.error);
+                });
+
+                // Testimonials
+                const unsubTestimonials = firebase.firestore.onSnapshot(getTestimonialsCollection(), (snapshot) => {
+                    setTestimonials(snapshot.docs.map(d => ({id: d.id, ...d.data()})));
+                });
+
+                return () => { unsubSettings(); unsubTestimonials(); };
+            }, [user]);
 
             const fetchLeads = async () => {
-                if (!db) return;
+                if (!user) return;
                 try {
-                    const q = firestoreFuncs.query(getLeadsCollection(), firestoreFuncs.orderBy("registeredAt", "desc"));
-                    const snap = await firestoreFuncs.getDocs(q);
-                    setLeads(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-                } catch (e) { console.error("Leads error", e); alert("Please create Firestore Index for proper sorting."); }
+                    const q = firebase.firestore.query(getLeadsCollection());
+                    const snap = await firebase.firestore.getDocs(q);
+                    const leadsData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    leadsData.sort((a, b) => new Date(b.registeredAt) - new Date(a.registeredAt));
+                    setLeads(leadsData);
+                } catch (e) { console.error("Leads error", e); }
             };
 
             const handleAdminAction = async () => {
-                if(isOffline) { alert("Offline Mode"); return; }
                 if (!settings.adminPasskey) {
                     if (!passkeyInput.trim()) return alert("Enter a valid passkey");
                     try {
-                        await firestoreFuncs.setDoc(getSettingsDoc(), { adminPasskey: passkeyInput.trim() }, { merge: true });
+                        await firebase.firestore.setDoc(getSettingsDoc(), { adminPasskey: passkeyInput.trim() }, { merge: true });
                         setIsAdmin(true); setShowLogin(false); fetchLeads();
                     } catch(e) { alert("Setup failed: " + e.message); }
                 } else {
@@ -159,17 +245,46 @@
 
             const handleRegister = async (e) => {
                 e.preventDefault();
+                if (!user) return;
                 const formData = new FormData(e.target);
-                const data = { name: formData.get('name'), email: formData.get('email'), phone: formData.get('phone'), registeredAt: new Date().toISOString(), source: 'web_v2_premium_en' };
-                if (db && !isOffline) { await firestoreFuncs.addDoc(getLeadsCollection(), data); }
-                setTimeout(() => { window.scrollTo(0,0); setCurrentPage('thankyou'); }, 800);
+                const data = { 
+                    name: formData.get('name'), 
+                    email: formData.get('email'), 
+                    phone: formData.get('phone'), 
+                    registeredAt: new Date().toISOString(), 
+                    source: 'web_v2_premium_en' 
+                };
+                try {
+                    await firebase.firestore.addDoc(getLeadsCollection(), data);
+                    setTimeout(() => { window.scrollTo(0,0); setCurrentPage('thankyou'); }, 800);
+                } catch (error) {
+                    console.error("Registration error", error);
+                    alert("Registration failed. Please try again.");
+                }
+            };
+
+            const handleAddTestimonial = async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                await firebase.firestore.addDoc(getTestimonialsCollection(), {
+                    name: formData.get('t_name'),
+                    role: formData.get('t_role'),
+                    message: formData.get('t_message'),
+                    image: formData.get('t_image') || 'https://via.placeholder.com/100',
+                    createdAt: new Date().toISOString()
+                });
+                e.target.reset();
+            };
+
+            const deleteTestimonial = async (id) => {
+                await firebase.firestore.deleteDoc(firebase.firestore.doc(db, 'artifacts', appId, 'public', 'data', TESTIMONIALS_COLLECTION, id));
             };
 
             const AdminPanel = () => (
                 <div className="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm flex justify-end">
                     <div className="w-full max-w-md bg-white h-full shadow-2xl p-6 overflow-y-auto animate-fade-in">
                         <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
-                            <h2 className="text-xl font-serif font-bold text-slate-800">Admin Console (English)</h2>
+                            <h2 className="text-xl font-serif font-bold text-slate-800">Admin Console</h2>
                             <button onClick={() => setIsAdmin(false)} className="text-slate-400 hover:text-red-500 flex items-center gap-1 text-sm"><Unlock size={14}/> Logout</button>
                         </div>
                         <div className="space-y-8">
@@ -177,11 +292,32 @@
                                 <button onClick={() => setCurrentPage('landing')} className="p-3 bg-slate-50 rounded border hover:bg-slate-100 text-sm font-medium">View Site</button>
                                 <button onClick={() => setCurrentPage('thankyou')} className="p-3 bg-slate-50 rounded border hover:bg-slate-100 text-sm font-medium">View Thank You</button>
                             </div>
+                            
+                            {/* Testimonials Management */}
                             <div>
-                                <h3 className="text-xs font-bold uppercase text-slate-400 mb-3 tracking-wider">Visual Identity (Shared)</h3>
+                                <h3 className="text-xs font-bold uppercase text-slate-400 mb-3 tracking-wider">Manage Testimonials</h3>
+                                <form onSubmit={handleAddTestimonial} className="space-y-2 mb-4">
+                                    <input name="t_name" placeholder="Student Name" required className="w-full border p-2 rounded text-sm"/>
+                                    <input name="t_role" placeholder="Role/Exam (e.g. MPSC Rank 1)" className="w-full border p-2 rounded text-sm"/>
+                                    <input name="t_image" placeholder="Image URL (optional)" className="w-full border p-2 rounded text-sm"/>
+                                    <textarea name="t_message" placeholder="Message" required className="w-full border p-2 rounded text-sm"></textarea>
+                                    <button type="submit" className="w-full bg-[var(--accent)] text-white p-2 rounded text-sm font-bold flex items-center justify-center gap-2"><Plus size={14}/> Add Testimonial</button>
+                                </form>
+                                <div className="space-y-2 max-h-40 overflow-y-auto">
+                                    {testimonials.map(t => (
+                                        <div key={t.id} className="flex justify-between items-center p-2 border rounded bg-slate-50">
+                                            <span className="text-xs font-bold truncate w-32">{t.name}</span>
+                                            <button onClick={() => deleteTestimonial(t.id)} className="text-red-500 hover:text-red-700"><Trash2 size={14}/></button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-xs font-bold uppercase text-slate-400 mb-3 tracking-wider">Visual Identity</h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div><label className="text-xs text-slate-500 mb-1 block">Primary</label><input type="color" value={settings.theme.primary} onChange={(e) => firestoreFuncs.setDoc(getSettingsDoc(), {theme: {...settings.theme, primary: e.target.value}}, {merge:true})} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
-                                    <div><label className="text-xs text-slate-500 mb-1 block">Accent</label><input type="color" value={settings.theme.accent} onChange={(e) => firestoreFuncs.setDoc(getSettingsDoc(), {theme: {...settings.theme, accent: e.target.value}}, {merge:true})} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
+                                    <div><label className="text-xs text-slate-500 mb-1 block">Primary</label><input type="color" value={settings.theme.primary} onChange={(e) => firebase.firestore.setDoc(getSettingsDoc(), {theme: {...settings.theme, primary: e.target.value}}, {merge:true})} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
+                                    <div><label className="text-xs text-slate-500 mb-1 block">Accent</label><input type="color" value={settings.theme.accent} onChange={(e) => firebase.firestore.setDoc(getSettingsDoc(), {theme: {...settings.theme, accent: e.target.value}}, {merge:true})} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
                                 </div>
                             </div>
                             <div>
@@ -198,16 +334,120 @@
                 </div>
             );
 
-            if (currentPage === 'thankyou') return ( <div style={{'--primary': settings.theme.primary, '--accent': settings.theme.accent}} className="min-h-screen bg-warm flex flex-col relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-2 bg-[var(--accent)] z-10"></div><div className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-12 animate-fade-up"><div className="text-center mb-12"><div className="w-20 h-20 rounded-full border-2 border-[var(--accent)] flex items-center justify-center mx-auto mb-6 text-[var(--accent)] bg-white shadow-xl"><CheckCircle size={40} /></div><h1 className="text-4xl md:text-5xl font-serif text-[var(--primary)] mb-4">{t.thankYouTitle}</h1><p className="text-[var(--text-body)] text-lg max-w-md mx-auto">{t.thankYouDesc}</p></div><div className="grid md:grid-cols-2 gap-12 items-start"><div className="space-y-8">{settings.pdfConfig.url && ( <GlassCard className="border-l-4 border-l-[var(--accent)]"><h3 className="font-serif font-bold text-xl text-[var(--primary)] mb-2">Exclusive Material</h3><p className="text-[var(--text-body)] mb-6 text-sm">Download the descriptive pattern guide prepared by Dr. Vishal.</p><a href={settings.pdfConfig.url} target="_blank" className="flex items-center justify-center w-full py-4 bg-[var(--primary)] text-white hover:bg-slate-800 transition-colors rounded text-sm tracking-widest uppercase font-medium"><Download size={18} className="mr-2"/> Download PDF</a></GlassCard> )}<div><h3 className="font-bold text-lg text-[var(--primary)] mb-4 flex items-center gap-2"><Video size={20} className="text-[var(--accent)]"/> {t.watchFirst}</h3><CustomVideoPlayer videoSource={settings.videoConfig} /></div></div><div><h3 className="font-bold text-lg text-[var(--primary)] mb-6">{t.nextSteps}</h3><div className="space-y-6"><div className="flex gap-4"><div className="w-8 h-8 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0">1</div><div><p className="font-medium text-[var(--primary)]">{t.joinWhatsApp}</p><a href="https://chat.whatsapp.com/J20Kcggb8XP7aL2rCdNjxA" target="_blank" className="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold hover:brightness-110 shadow-md shadow-green-200 mt-2 transition-transform transform hover:-translate-y-0.5"><MessageCircle size={18} /> {t.joinGroup}</a></div></div><div className="flex gap-4"><div className="w-8 h-8 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0">2</div><div><p className="font-medium text-[var(--primary)]">{t.followUpdates}</p><div className="flex gap-3 mt-3"><a href={settings.socialLinks.instagram} target="_blank" className="p-3 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white rounded-lg hover:opacity-90 shadow-sm transition-transform hover:-translate-y-0.5"><Instagram size={20} /></a><a href={settings.socialLinks.facebook} target="_blank" className="p-3 bg-[#1877F2] text-white rounded-lg hover:brightness-110 shadow-sm transition-transform hover:-translate-y-0.5"><Facebook size={20} /></a><a href={settings.socialLinks.telegram} target="_blank" className="p-3 bg-[#0088cc] text-white rounded-lg hover:brightness-110 shadow-sm transition-transform hover:-translate-y-0.5"><Send size={20} /></a></div></div></div></div><div className="mt-12 pt-8 border-t border-slate-200"><button onClick={() => setCurrentPage('landing')} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-[var(--primary)] transition-colors"><Home size={16}/> Back to Home</button></div></div></div></div>{isAdmin && <AdminPanel />}{!isAdmin && ( <button onClick={() => setShowLogin(true)} className="fixed bottom-4 right-4 p-2 text-slate-300 hover:text-slate-400 transition-colors"><Lock size={16} /></button> )}</div> );
+            if (currentPage === 'thankyou') return ( <div style={{'--primary': settings.theme.primary, '--accent': settings.theme.accent}} className="min-h-screen bg-warm flex flex-col relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-2 bg-[var(--accent)] z-10"></div><div className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-12 animate-fade-up"><div className="text-center mb-12"><div className="w-20 h-20 rounded-full border-2 border-[var(--accent)] flex items-center justify-center mx-auto mb-6 text-[var(--accent)] bg-white shadow-xl"><CheckCircle size={40} /></div><h1 className="text-4xl md:text-5xl font-serif text-[var(--primary)] mb-4">{t.thankYouTitle}</h1><p className="text-[var(--text-body)] text-lg max-w-md mx-auto">{t.thankYouDesc}</p></div><div className="grid md:grid-cols-2 gap-12 items-start mb-16"><div className="space-y-8">{settings.pdfConfig.url && ( <GlassCard className="border-l-4 border-l-[var(--accent)]"><h3 className="font-serif font-bold text-xl text-[var(--primary)] mb-2">Exclusive Material</h3><p className="text-[var(--text-body)] mb-6 text-sm">Download the descriptive pattern guide prepared by Dr. Vishal.</p><a href={settings.pdfConfig.url} target="_blank" className="flex items-center justify-center w-full py-4 bg-[var(--primary)] text-white hover:bg-slate-800 transition-colors rounded text-sm tracking-widest uppercase font-medium"><Download size={18} className="mr-2"/> Download PDF</a></GlassCard> )}<div><h3 className="font-bold text-lg text-[var(--primary)] mb-4 flex items-center gap-2"><Video size={20} className="text-[var(--accent)]"/> {t.watchFirst}</h3><CustomVideoPlayer videoSource={settings.videoConfig} /></div></div><div><h3 className="font-bold text-lg text-[var(--primary)] mb-6">{t.nextSteps}</h3><div className="space-y-6"><div className="flex gap-4"><div className="w-8 h-8 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0">1</div><div><p className="font-medium text-[var(--primary)]">{t.joinWhatsApp}</p><a href="https://chat.whatsapp.com/J20Kcggb8XP7aL2rCdNjxA" target="_blank" className="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold hover:brightness-110 shadow-md shadow-green-200 mt-2 transition-transform transform hover:-translate-y-0.5"><MessageCircle size={18} /> {t.joinGroup}</a></div></div><div className="flex gap-4"><div className="w-8 h-8 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0">2</div><div><p className="font-medium text-[var(--primary)]">{t.followUpdates}</p><div className="flex gap-3 mt-3"><a href={settings.socialLinks.instagram} target="_blank" className="p-3 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white rounded-lg hover:opacity-90 shadow-sm transition-transform hover:-translate-y-0.5"><Instagram size={20} /></a><a href={settings.socialLinks.facebook} target="_blank" className="p-3 bg-[#1877F2] text-white rounded-lg hover:brightness-110 shadow-sm transition-transform hover:-translate-y-0.5"><Facebook size={20} /></a><a href={settings.socialLinks.telegram} target="_blank" className="p-3 bg-[#0088cc] text-white rounded-lg hover:brightness-110 shadow-sm transition-transform hover:-translate-y-0.5"><Send size={20} /></a></div></div></div></div><div className="mt-12 pt-8 border-t border-slate-200"><button onClick={() => setCurrentPage('landing')} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-[var(--primary)] transition-colors"><Home size={16}/> Back to Home</button></div></div>
+            
+            {/* Testimonials Section */}
+            {testimonials.length > 0 && (
+                <div className="mt-16 pt-16 border-t border-slate-200">
+                    <h2 className="text-3xl font-serif font-bold text-[var(--primary)] text-center mb-10">{t.testimonialsTitle}</h2>
+                    <div className="grid md:grid-cols-3 gap-6">
+                        {testimonials.map(item => (
+                            <div key={item.id} className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                                <Quote size={24} className="text-[var(--accent)] mb-4 opacity-50"/>
+                                <p className="text-slate-600 mb-6 italic">"{item.message}"</p>
+                                <div className="flex items-center gap-3">
+                                    <img src={item.image} alt={item.name} className="w-10 h-10 rounded-full object-cover"/>
+                                    <div>
+                                        <p className="font-bold text-[var(--primary)] text-sm">{item.name}</p>
+                                        <p className="text-xs text-slate-400">{item.role}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+            
+            </div>{isAdmin && <AdminPanel />}{!isAdmin && ( <button onClick={() => setShowLogin(true)} className="fixed bottom-4 right-4 p-2 text-slate-300 hover:text-slate-400 transition-colors"><Lock size={16} /></button> )}</div> );
 
             return (
                 <div style={{'--primary': settings.theme.primary, '--accent': settings.theme.accent}} className="min-h-screen font-sans selection:bg-[var(--accent)] selection:text-white">
                     <nav className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all shadow-sm"><div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center"><div className="font-serif font-bold text-xl tracking-tight text-[var(--primary)]">Dnyanjyoti<span className="text-[var(--accent)]">.</span></div><div className="flex items-center gap-6"><button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="px-6 py-2 bg-[var(--primary)] text-white text-xs tracking-widest uppercase hover:bg-slate-800 transition-colors rounded">{t.secureSpot}</button></div></div></nav>
-                    <header className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden bg-gradient-to-br from-[var(--warm)] via-white to-white"><div className="absolute inset-0 bg-pattern-dots opacity-30 pointer-events-none"></div><div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center"><div className="animate-fade-up order-1 md:order-1 relative z-10"><span className="inline-block py-2 px-4 border border-[var(--accent)] rounded-lg text-[10px] md:text-xs tracking-[0.1em] font-bold text-[var(--accent)] uppercase mb-6 bg-white/80 backdrop-blur shadow-sm">{t.heroFeature}</span><p className="text-[var(--primary)] font-bold tracking-widest uppercase text-xs mb-4">{t.heroSubtitle}</p><h1 className="text-5xl md:text-7xl font-serif font-medium text-[var(--primary)] leading-[1.1] mb-6">{t.heroTitle1} <br/> <span className="italic text-slate-400">{t.heroTitle2}</span></h1><p className="text-[var(--text-body)] text-lg md:text-xl font-light leading-relaxed mb-10 max-w-lg border-l-2 border-[var(--accent)] pl-6">{t.heroDesc}</p><div className="flex flex-col sm:flex-row gap-4"><button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="px-8 py-4 bg-[var(--accent)] text-white text-sm tracking-widest uppercase font-bold hover:brightness-110 transition-all rounded shadow-lg shadow-orange-100 hover:shadow-xl transform hover:-translate-y-0.5">{t.secureSpot}</button></div></div><div className="relative order-2 md:order-2 animate-fade-in"><div className="absolute inset-0 bg-[var(--accent)] rounded-full opacity-5 blur-3xl transform translate-x-10 translate-y-10"></div><div className="relative z-10 aspect-[4/5] md:aspect-square rounded-2xl overflow-hidden bg-slate-200 shadow-2xl border-4 border-white"><img src="https://res.cloudinary.com/dkkkjtoa9/image/upload/v1765787346/image6555_mh6v2z.png" className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-1000" alt="Dr Vishal Bhedurkar" /><div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[var(--primary)] to-transparent text-white"><p className="font-serif text-xl italic opacity-90">"{t.mentorQuote}"</p></div></div></div></div></header>
+                    
+                    {/* Hero Section */}
+                    <header className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden bg-gradient-to-br from-[var(--warm)] via-white to-white"><div className="absolute inset-0 bg-pattern-dots opacity-30 pointer-events-none"></div><div className="max-w-7xl mx-auto flex flex-col items-center text-center"><div className="animate-fade-up relative z-10 max-w-4xl">
+                        <p className="text-[var(--primary)] font-bold tracking-widest uppercase text-xs mb-4">{t.heroSubtitle}</p>
+                        
+                        <h1 className="text-5xl md:text-8xl font-serif font-bold text-[var(--primary)] leading-[1.1] mb-6">
+                            {t.heroTitle1} <br/> 
+                            <span className="text-red-600 italic">{t.heroTitle2}</span>
+                        </h1>
+                        
+                        {/* Point-wise Exam Section */}
+                        <ul className="inline-block text-left mb-10 space-y-2 border-l-4 border-[var(--accent)] pl-6 py-2">
+                            {t.heroExams.map((exam, i) => (
+                                <li key={i} className="text-[var(--text-body)] text-lg md:text-xl font-medium flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></div>
+                                    {exam}
+                                </li>
+                            ))}
+                        </ul>
+
+                        <div className="flex flex-col items-center gap-6">
+                            <button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="px-10 py-5 bg-[var(--accent)] text-white text-base tracking-widest uppercase font-bold hover:brightness-110 transition-all rounded shadow-lg shadow-orange-100 hover:shadow-xl transform hover:-translate-y-0.5">{t.secureSpot}</button>
+                            
+                            {/* Pulsating Chip moved below button */}
+                            <span className="inline-block py-2 px-6 border border-[var(--accent)] rounded-full text-[10px] md:text-xs tracking-[0.1em] font-bold text-[var(--accent)] uppercase bg-white/80 backdrop-blur shadow-sm animate-pulse-glow">
+                                {t.heroFeature}
+                            </span>
+                        </div>
+                    </div></div></header>
+
                     <div className="border-y border-slate-100 bg-white relative z-20"><div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">{[{ val: "12+", label: t.stat1 }, { val: "1000+", label: t.stat2 }, { val: "350+", label: t.stat3 }, { val: "4", label: t.stat4 }].map((s,i) => (<div key={i}><h4 className="text-3xl md:text-4xl font-serif text-[var(--primary)] mb-2">{s.val}</h4><p className="text-[10px] md:text-xs font-bold tracking-widest text-[var(--text-body)] uppercase">{s.label}</p></div>))}</div></div>
-                    <section className="py-24 px-6 bg-[var(--primary)] relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none"><div className="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] bg-white rounded-full blur-[120px]"></div></div><div className="max-w-5xl mx-auto relative z-10"><SectionHeader title={t.whyTitle} subtitle={t.whySubtitle} light={true} /><div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 md:p-12 border border-white/10 shadow-2xl"><div className="space-y-6">{t.whyList.map((item, i) => (<div key={i} className="flex items-start gap-4 p-4 hover:bg-white/5 rounded-lg transition-all duration-300 border border-transparent hover:border-white/5"><div className="shrink-0 w-10 h-10 rounded-full bg-[var(--accent)] text-white flex items-center justify-center shadow-lg font-bold">{item.icon}</div><p className="text-slate-200 text-lg pt-1 leading-relaxed">{item.text}</p></div>))}</div></div></div></section>
-                    <section className="py-24 px-6 bg-[var(--surface)]"><div className="max-w-7xl mx-auto"><SectionHeader title={t.agendaTitle} subtitle={t.agendaSubtitle} /><div className="grid md:grid-cols-3 gap-6">{t.agendaList.map((item, i) => (<div key={i} className="bg-white rounded-xl p-8 shadow-sm border border-slate-100 hover:shadow-xl hover:border-[var(--accent)] transition-all duration-300 group"><div className="w-12 h-12 rounded-lg bg-[var(--warm)] text-[var(--accent)] flex items-center justify-center mb-6 group-hover:bg-[var(--accent)] group-hover:text-white transition-colors shadow-inner">{item.icon}</div><h3 className="text-lg font-bold text-[var(--primary)] mb-3">{item.title}</h3><p className="text-sm text-[var(--text-body)] leading-relaxed">{item.desc}</p></div>))}</div></div></section>
-                    <section id="register" className="py-24 px-6 bg-[var(--primary)] text-white relative overflow-hidden"><div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--accent)_0%,_transparent_70%)] opacity-20 pointer-events-none"></div><div className="absolute top-0 right-0 w-1/2 h-full bg-white/5 skew-x-12 transform translate-x-20"></div><div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center relative z-10"><div><h2 className="text-4xl md:text-5xl font-serif mb-6 leading-tight tracking-normal text-[var(--accent)]">{t.formTitle}</h2><p className="text-slate-300 font-light text-lg mb-8">{t.formSubtitle}</p><ul className="space-y-4 mb-10">{["Access to Live Interactive Session", "Exclusive PDF Study Material", "Priority Counselling Slot"].map((item, i) => (<li key={i} className="flex items-center gap-3 text-sm text-slate-200 font-medium"><div className="w-2 h-2 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]"></div>{item}</li>))}</ul></div><div className="bg-white text-[var(--text-body)] p-8 md:p-10 rounded-2xl shadow-2xl relative"><div className="absolute -top-4 -right-4 bg-[var(--accent)] text-white text-xs font-bold py-1 px-3 rounded shadow-lg uppercase tracking-wider">Free Access</div><form onSubmit={handleRegister} className="space-y-6"><div><label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">{t.name}</label><input required name="name" type="text" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="Enter full name" /></div><div><label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">{t.email}</label><input required name="email" type="email" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="Enter email address" /></div><div><label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">{t.phone}</label><input required name="phone" type="tel" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="Enter phone number" /></div><button type="submit" className="w-full py-4 bg-[var(--accent)] text-white font-bold tracking-widest uppercase hover:brightness-110 transition-all rounded mt-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1">{t.formButton}</button><p className="text-center text-xs text-slate-400 mt-4">Limited seats available. First come, first served.</p></form></div></div></section>
+                    
+                    {/* Why Attend Section */}
+                    <section className="py-24 px-6 bg-[var(--primary)] relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none"><div className="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] bg-white rounded-full blur-[120px]"></div></div>
+                        <div className="max-w-5xl mx-auto relative z-10">
+                            <SectionHeader title={t.whyTitle} subtitle={t.whySubtitle} light={true} />
+                            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-5 md:p-10 border border-white/10 shadow-2xl">
+                                <div className="space-y-4">
+                                    {t.whyList.map((item, i) => (
+                                        <div key={i} className="flex flex-col md:flex-row items-center md:items-start gap-4 p-4 hover:bg-white/5 rounded-lg transition-all duration-300 border border-transparent hover:border-white/5 text-center md:text-left">
+                                            <div className="shrink-0 w-12 h-12 rounded-full bg-[var(--accent)] text-white flex items-center justify-center shadow-lg font-bold mb-2 md:mb-0">
+                                                {item.icon}
+                                            </div>
+                                            <p className="text-slate-200 text-lg pt-1 leading-relaxed">{item.text}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    {/* New Profile Section (Shifted Here) */}
+                    <section className="py-24 px-6 bg-[var(--warm)] relative">
+                        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+                            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl border-4 border-white order-1 md:order-1">
+                                <img src="https://res.cloudinary.com/dkkkjtoa9/image/upload/v1765787346/image6555_mh6v2z.png" className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-1000" alt={t.mentorName} />
+                                <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[var(--primary)] to-transparent text-white">
+                                    <p className="font-serif text-xl italic opacity-90">"{t.mentorQuote}"</p>
+                                </div>
+                            </div>
+                            <div className="order-2 md:order-2">
+                                <span className="text-[var(--accent)] font-bold tracking-widest uppercase text-xs mb-2 block">{t.mentorTitle}</span>
+                                <h2 className="text-4xl md:text-5xl font-serif font-bold text-[var(--primary)] mb-4">{t.mentorName}</h2>
+                                <p className="text-xl text-slate-600 font-medium mb-6">{t.mentorRole}</p>
+                                <div className="h-1 w-20 bg-[var(--accent)] mb-6"></div>
+                                <p className="text-[var(--text-body)] leading-relaxed text-lg">
+                                    With years of experience guiding top rankers, Dr. Vishal brings a unique blend of administrative expertise and academic depth to help you crack the toughest exams.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="py-24 px-6 bg-[var(--surface)]"><div className="max-w-7xl mx-auto"><SectionHeader title={t.agendaTitle} subtitle={t.agendaSubtitle} /><div className="grid md:grid-cols-3 gap-6">{t.agendaList.map((item, i) => (<div key={i} className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-[var(--accent)] transition-all duration-300 group"><div className="w-12 h-12 rounded-lg bg-[var(--warm)] text-[var(--accent)] flex items-center justify-center mb-6 group-hover:bg-[var(--accent)] group-hover:text-white transition-colors shadow-inner">{item.icon}</div><h3 className="text-lg font-bold text-[var(--primary)] mb-3">{item.title}</h3><p className="text-sm text-[var(--text-body)] leading-relaxed">{item.desc}</p></div>))}</div></div></section>
+                    
+                    <section id="register" className="py-24 px-6 bg-[var(--primary)] text-white relative overflow-hidden"><div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--accent)_0%,_transparent_70%)] opacity-20 pointer-events-none"></div><div className="absolute top-0 right-0 w-1/2 h-full bg-white/5 skew-x-12 transform translate-x-20"></div><div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center relative z-10"><div><h2 className="text-4xl md:text-5xl font-serif mb-6 leading-tight tracking-normal text-[var(--accent)]">{t.formTitle}</h2><p className="text-slate-300 font-light text-lg mb-8">{t.formSubtitle}</p><ul className="space-y-4 mb-10">{["Access to Live Interactive Session", "Exclusive PDF Study Material", "Priority Counselling Slot"].map((item, i) => (<li key={i} className="flex items-center gap-3 text-sm text-slate-200 font-medium"><div className="w-2 h-2 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]"></div>{item}</li>))}</ul></div><div className="bg-white text-[var(--text-body)] p-6 md:p-10 rounded-2xl shadow-2xl relative"><div className="absolute -top-4 -right-4 bg-[var(--accent)] text-white text-xs font-bold py-1 px-3 rounded shadow-lg uppercase tracking-wider">Free Access</div>
+                    <form onSubmit={handleRegister} className="space-y-6">
+                        <div><label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">{t.name}</label><input required name="name" type="text" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="Enter full name" /></div>
+                        <div><label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">{t.email}</label><input required name="email" type="email" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="Enter email address" /></div>
+                        <div><label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">{t.phone}</label><input required name="phone" type="tel" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="Enter phone number" /></div>
+                        <div className="text-center">
+                            <button type="submit" className="w-full py-4 bg-[var(--accent)] text-white font-bold tracking-widest uppercase hover:brightness-110 transition-all rounded mt-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1">{t.formButton}</button>
+                            <p className="text-sm font-medium text-[var(--accent)] mt-3 animate-pulse">{t.freeMaterial}</p>
+                        </div>
+                        <p className="text-center text-xs text-slate-400 mt-2">Limited seats available. First come, first served.</p>
+                    </form></div></div></section>
                     <footer className="bg-[var(--primary)] text-slate-400 py-12 px-6 border-t border-white/10 text-center md:text-left"><div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6"><div className="font-serif text-white text-lg">Dnyanjyoti Education</div><div className="text-xs tracking-wider uppercase flex gap-6"><a href="#" className="hover:text-[var(--accent)] transition-colors">Privacy</a><a href="#" className="hover:text-[var(--accent)] transition-colors">Terms</a><a href="#" className="hover:text-[var(--accent)] transition-colors">Contact</a></div><div className="flex gap-4"><a href={settings.socialLinks.instagram} className="hover:text-white transition-colors"><Instagram size={18}/></a><a href={settings.socialLinks.facebook} className="hover:text-white transition-colors"><Facebook size={18}/></a></div></div></footer>
                     {isAdmin && <AdminPanel />}
                     {!isAdmin && showLogin && ( <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4"><div className="bg-white p-6 rounded max-w-sm w-full"><h3 className="text-lg font-bold mb-4 text-[var(--primary)]">{!settings.adminPasskey ? "Set Admin Passkey" : "Admin Access"}</h3><p className="text-xs text-slate-500 mb-4">{!settings.adminPasskey ? "This is a one-time setup. The passkey you set now will be required for all future logins." : "Enter your passkey to manage student data."}</p><input type="password" value={passkeyInput} onChange={e => setPasskeyInput(e.target.value)} className="w-full border p-2 mb-4 rounded" placeholder={!settings.adminPasskey ? "Create new passkey" : "Enter Key"} /><div className="flex justify-end gap-2"><button onClick={() => setShowLogin(false)} className="px-4 py-2 text-slate-500">Cancel</button><button onClick={handleAdminAction} className="px-4 py-2 bg-[var(--primary)] text-white rounded">{!settings.adminPasskey ? "Save & Login" : "Unlock"}</button></div></div></div> )}
@@ -216,17 +456,8 @@
             );
         };
 
-        async function initApp() {
-            try {
-                const configPromise = import('./firebase-config.js');
-                const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve('timeout'), 3000));
-                const result = await Promise.race([configPromise, timeoutPromise]);
-                if (result === 'timeout' || !result.db) { console.warn("Offline Mode"); createRoot(document.getElementById('root')).render(<App isOffline={true} />); }
-                else { db = result.db; auth = result.auth; const fs = await import('firebase/firestore'); firestoreFuncs = { ...fs }; createRoot(document.getElementById('root')).render(<App isOffline={false} />); }
-            } catch (e) { console.error("Init Error", e); createRoot(document.getElementById('root')).render(<App isOffline={true} />); }
-        }
-
-        initApp();
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
