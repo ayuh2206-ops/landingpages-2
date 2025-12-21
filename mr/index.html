@@ -133,7 +133,7 @@
         };
 
         const GlassCard = ({ children, className = "" }) => ( <div className={`glass-panel rounded-lg p-4 md:p-6 hover:shadow-lg transition-all duration-500 ${className}`}>{children}</div> );
-        const SectionHeader = ({ title, subtitle, align = "center", light = false }) => ( <div className={`mb-12 ${align === 'center' ? 'text-center' : 'text-left'}`}><h2 className={`text-3xl md:text-4xl font-sans font-bold mb-3 tracking-normal leading-tight ${light ? 'text-white' : 'text-[var(--primary)]'}`}>{title}</h2><div className={`h-1 w-16 bg-[var(--accent)] mb-3 ${align === 'center' ? 'mx-auto' : ''}`}></div>{subtitle && <p className={`text-lg tracking-normal ${light ? 'text-slate-300' : 'text-[var(--text-body)]'}`}>{subtitle}</p>}</div> );
+        const SectionHeader = ({ title, subtitle, align = "center", light = false }) => ( <div className={`mb-12 ${align === 'center' ? 'text-center' : 'text-left'}`}><h2 className={`text-4xl md:text-5xl font-sans font-bold mb-3 tracking-normal leading-tight ${light ? 'text-white' : 'text-[var(--primary)]'}`}>{title}</h2><div className={`h-1 w-16 bg-[var(--accent)] mb-3 ${align === 'center' ? 'mx-auto' : ''}`}></div>{subtitle && <p className={`text-xl md:text-2xl tracking-normal ${light ? 'text-slate-300' : 'text-[var(--text-body)]'}`}>{subtitle}</p>}</div> );
         
         const CustomVideoPlayer = ({ videoSource }) => {
             const videoRef = useRef(null); const [isPlaying, setIsPlaying] = useState(false); const [showControls, setShowControls] = useState(true);
@@ -145,18 +145,18 @@
             <div className="bg-white rounded-xl p-5 shadow-md border border-slate-100 hover:shadow-lg transition-all">
                 <div className="flex items-start gap-3 mb-3">
                     {testimonial.imageUrl ? (
-                        <img src={testimonial.imageUrl} alt={testimonial.name} className="w-12 h-12 rounded-full object-cover border-2 border-[var(--accent)]" />
+                        <img src={testimonial.imageUrl} alt={testimonial.name} className="w-14 h-14 rounded-full object-cover border-2 border-[var(--accent)]" />
                     ) : (
-                        <div className="w-12 h-12 rounded-full bg-[var(--accent)] text-white flex items-center justify-center font-bold text-lg">
+                        <div className="w-14 h-14 rounded-full bg-[var(--accent)] text-white flex items-center justify-center font-bold text-xl">
                             {testimonial.name?.charAt(0) || 'S'}
                         </div>
                     )}
                     <div>
-                        <h4 className="font-bold text-[var(--primary)] text-sm tracking-normal">{testimonial.name}</h4>
-                        {testimonial.role && <p className="text-xs text-slate-500 tracking-normal">{testimonial.role}</p>}
+                        <h4 className="font-bold text-[var(--primary)] text-base tracking-normal">{testimonial.name}</h4>
+                        {testimonial.role && <p className="text-sm text-slate-500 tracking-normal">{testimonial.role}</p>}
                     </div>
                 </div>
-                <p className="text-slate-600 text-sm leading-relaxed italic tracking-normal">"{testimonial.text}"</p>
+                <p className="text-slate-600 text-base leading-relaxed italic tracking-normal">"{testimonial.text}"</p>
             </div>
         );
 
@@ -320,37 +320,37 @@
                     <div className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-12 animate-fade-up">
                         <div className="text-center mb-12">
                             <div className="w-20 h-20 rounded-full border-2 border-[var(--accent)] flex items-center justify-center mx-auto mb-6 text-[var(--accent)] bg-white shadow-xl"><CheckCircle size={40} /></div>
-                            <h1 className="text-4xl md:text-5xl font-sans text-[var(--primary)] mb-4 tracking-normal leading-tight">{t.thankYouTitle}</h1>
-                            <p className="text-[var(--text-body)] text-lg max-w-md mx-auto tracking-normal">{t.thankYouDesc}</p>
+                            <h1 className="text-5xl md:text-6xl font-sans text-[var(--primary)] mb-4 tracking-normal leading-tight">{t.thankYouTitle}</h1>
+                            <p className="text-[var(--text-body)] text-xl max-w-md mx-auto tracking-normal">{t.thankYouDesc}</p>
                         </div>
                         <div className="grid md:grid-cols-2 gap-12 items-start">
                             <div className="space-y-8">
                                 {settings.pdfConfig.url && (
                                     <GlassCard className="border-l-4 border-l-[var(--accent)]">
-                                        <h3 className="font-sans font-bold text-xl text-[var(--primary)] mb-2 tracking-normal">विशेष साहित्य</h3>
-                                        <p className="text-[var(--text-body)] mb-6 text-sm tracking-normal">Dr. Vishal यांनी तयार केलेली descriptive pattern guide डाउनलोड करा.</p>
-                                        <a href={settings.pdfConfig.url} target="_blank" className="flex items-center justify-center w-full py-4 bg-[var(--primary)] text-white hover:bg-slate-800 transition-colors rounded text-sm tracking-normal font-bold"><Download size={18} className="mr-2"/> PDF डाउनलोड करा</a>
+                                        <h3 className="font-sans font-bold text-2xl text-[var(--primary)] mb-2 tracking-normal">विशेष साहित्य</h3>
+                                        <p className="text-[var(--text-body)] mb-6 text-base tracking-normal">Dr. Vishal यांनी तयार केलेली descriptive pattern guide डाउनलोड करा.</p>
+                                        <a href={settings.pdfConfig.url} target="_blank" className="flex items-center justify-center w-full py-4 bg-[var(--primary)] text-white hover:bg-slate-800 transition-colors rounded text-base tracking-normal font-bold"><Download size={18} className="mr-2"/> PDF डाउनलोड करा</a>
                                     </GlassCard>
                                 )}
                                 <div>
-                                    <h3 className="font-bold text-lg text-[var(--primary)] mb-4 flex items-center gap-2 tracking-normal"><Video size={20} className="text-[var(--accent)]"/> {t.watchFirst}</h3>
+                                    <h3 className="font-bold text-xl text-[var(--primary)] mb-4 flex items-center gap-2 tracking-normal"><Video size={20} className="text-[var(--accent)]"/> {t.watchFirst}</h3>
                                     <CustomVideoPlayer videoSource={settings.videoConfig} />
                                 </div>
                             </div>
                             <div>
-                                <h3 className="font-bold text-lg text-[var(--primary)] mb-6 tracking-normal">{t.nextSteps}</h3>
+                                <h3 className="font-bold text-xl text-[var(--primary)] mb-6 tracking-normal">{t.nextSteps}</h3>
                                 <div className="space-y-6">
                                     <div className="flex gap-4">
-                                        <div className="w-8 h-8 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0">1</div>
+                                        <div className="w-10 h-10 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0 text-lg">1</div>
                                         <div>
-                                            <p className="font-medium text-[var(--primary)] tracking-normal">{t.joinWhatsApp}</p>
-                                            <a href="https://chat.whatsapp.com/J20Kcggb8XP7aL2rCdNjxA" target="_blank" className="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold hover:brightness-110 shadow-md shadow-green-200 mt-2 transition-transform transform hover:-translate-y-0.5 tracking-normal"><MessageCircle size={18} /> {t.joinGroup}</a>
+                                            <p className="font-medium text-[var(--primary)] tracking-normal text-lg">{t.joinWhatsApp}</p>
+                                            <a href="https://chat.whatsapp.com/J20Kcggb8XP7aL2rCdNjxA" target="_blank" className="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold text-base hover:brightness-110 shadow-md shadow-green-200 mt-2 transition-transform transform hover:-translate-y-0.5 tracking-normal"><MessageCircle size={18} /> {t.joinGroup}</a>
                                         </div>
                                     </div>
                                     <div className="flex gap-4">
-                                        <div className="w-8 h-8 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0">2</div>
+                                        <div className="w-10 h-10 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0 text-lg">2</div>
                                         <div>
-                                            <p className="font-medium text-[var(--primary)] tracking-normal">{t.followUpdates}</p>
+                                            <p className="font-medium text-[var(--primary)] tracking-normal text-lg">{t.followUpdates}</p>
                                             <div className="flex gap-3 mt-3">
                                                 <a href={settings.socialLinks.instagram} target="_blank" className="p-3 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white rounded-lg hover:opacity-90 shadow-sm transition-transform hover:-translate-y-0.5"><Instagram size={20} /></a>
                                                 <a href={settings.socialLinks.facebook} target="_blank" className="p-3 bg-[#1877F2] text-white rounded-lg hover:brightness-110 shadow-sm transition-transform hover:-translate-y-0.5"><Facebook size={20} /></a>
@@ -360,7 +360,7 @@
                                     </div>
                                 </div>
                                 <div className="mt-12 pt-8 border-t border-slate-200">
-                                    <button onClick={() => setCurrentPage('landing')} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-[var(--primary)] transition-colors tracking-normal"><Home size={16}/> मुखपृष्ठावर जा</button>
+                                    <button onClick={() => setCurrentPage('landing')} className="flex items-center gap-2 text-base font-bold text-slate-500 hover:text-[var(--primary)] transition-colors tracking-normal"><Home size={18}/> मुखपृष्ठावर जा</button>
                                 </div>
                             </div>
                         </div>
@@ -384,31 +384,31 @@
 
             return (
                 <div style={{'--primary': settings.theme.primary, '--accent': settings.theme.accent}} className="min-h-screen font-sans selection:bg-[var(--accent)] selection:text-white">
-                    <nav className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all shadow-sm"><div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center"><div className="font-serif font-bold text-xl tracking-normal text-[var(--primary)]">Dnyanjyoti<span className="text-[var(--accent)]">.</span></div><div className="flex items-center gap-6"><button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="hidden md:block px-6 py-2 bg-[var(--primary)] text-white text-base font-semibold tracking-normal uppercase hover:bg-slate-800 transition-colors rounded">{t.secureSpot}</button></div></div></nav>
+                    <nav className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all shadow-sm"><div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center"><div className="font-serif font-bold text-2xl tracking-normal text-[var(--primary)]">Dnyanjyoti<span className="text-[var(--accent)]">.</span></div><div className="flex items-center gap-6"><button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="hidden md:block px-6 py-2 bg-[var(--primary)] text-white text-lg font-semibold tracking-normal uppercase hover:bg-slate-800 transition-colors rounded">{t.secureSpot}</button></div></div></nav>
                     
                     <header className="relative pt-32 pb-16 md:pt-44 md:pb-24 px-6 overflow-hidden bg-gradient-to-br from-[var(--warm)] via-white to-white">
                         <div className="absolute inset-0 bg-pattern-dots opacity-30 pointer-events-none"></div>
                         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
                             <div className="animate-fade-up order-1 md:order-1 relative z-10">
-                                <h1 className="text-4xl md:text-6xl font-sans font-black text-[var(--primary)] leading-normal mb-4 tracking-normal">
+                                <h1 className="text-5xl md:text-7xl font-sans font-black text-[var(--primary)] leading-normal mb-4 tracking-normal">
                                     {t.heroTitle1} <br/>
                                     <span className="text-red-600 italic">{t.heroTitle2}</span>
                                 </h1>
-                                <p className="text-[var(--primary)] font-semibold tracking-normal uppercase text-sm mb-6 flex items-center gap-2">
-                                    <CheckCircle size={16} className="text-[var(--accent)]" />
+                                <p className="text-[var(--primary)] font-semibold tracking-normal uppercase text-base md:text-lg mb-6 flex items-center gap-2">
+                                    <CheckCircle size={18} className="text-[var(--accent)]" />
                                     {t.heroSubtitle}
                                 </p>
-                                <ul className="text-[var(--text-body)] text-lg md:text-xl font-normal leading-relaxed mb-8 max-w-lg border-l-2 border-[var(--accent)] pl-6 space-y-2">
+                                <ul className="text-[var(--text-body)] text-xl md:text-2xl font-normal leading-relaxed mb-8 max-w-lg border-l-2 border-[var(--accent)] pl-6 space-y-3">
                                     {t.heroDesc.map((item, i) => (
-                                        <li key={i} className="flex items-center gap-2 tracking-normal">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
+                                        <li key={i} className="flex items-center gap-3 tracking-normal">
+                                            <span className="w-2 h-2 rounded-full bg-[var(--accent)]"></span>
                                             {item}
                                         </li>
                                     ))}
                                 </ul>
                                 <div className="flex flex-col gap-4">
-                                    <button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="px-8 py-4 bg-[var(--accent)] text-white text-lg tracking-normal uppercase font-bold hover:brightness-110 transition-all rounded shadow-lg shadow-orange-100 hover:shadow-xl transform hover:-translate-y-0.5 w-fit">{t.secureSpot}</button>
-                                    <div className="glow-badge py-3 px-5 rounded-full text-white text-sm md:text-base font-bold tracking-normal w-fit">
+                                    <button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="px-8 py-4 bg-[var(--accent)] text-white text-xl tracking-normal uppercase font-bold hover:brightness-110 transition-all rounded shadow-lg shadow-orange-100 hover:shadow-xl transform hover:-translate-y-0.5 w-fit">{t.secureSpot}</button>
+                                    <div className="glow-badge py-3 px-5 rounded-full text-white text-base md:text-lg font-bold tracking-normal w-fit">
                                         {t.heroFeature}
                                     </div>
                                 </div>
@@ -419,7 +419,7 @@
                         </div>
                     </header>
 
-                    <div className="border-y border-slate-100 bg-white relative z-20"><div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">{[{ val: "12+", label: t.stat1 }, { val: "1000+", label: t.stat2 }, { val: "350+", label: t.stat3 }, { val: "4", label: t.stat4 }].map((s,i) => (<div key={i}><h4 className="text-3xl md:text-4xl font-serif text-[var(--primary)] mb-1 tracking-normal">{s.val}</h4><p className="text-xs md:text-sm font-bold tracking-normal text-[var(--text-body)] uppercase">{s.label}</p></div>))}</div></div>
+                    <div className="border-y border-slate-100 bg-white relative z-20"><div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">{[{ val: "12+", label: t.stat1 }, { val: "1000+", label: t.stat2 }, { val: "350+", label: t.stat3 }, { val: "4", label: t.stat4 }].map((s,i) => (<div key={i}><h4 className="text-4xl md:text-5xl font-serif text-[var(--primary)] mb-1 tracking-normal">{s.val}</h4><p className="text-sm md:text-base font-bold tracking-normal text-[var(--text-body)] uppercase">{s.label}</p></div>))}</div></div>
 
                     <section className="py-20 px-6 bg-[var(--primary)] relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none"><div className="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] bg-white rounded-full blur-[120px]"></div></div>
@@ -429,8 +429,8 @@
                                 <div className="space-y-4">
                                     {t.whyList.map((item, i) => (
                                         <div key={i} className="flex flex-col md:flex-row md:items-start gap-3 p-4 hover:bg-white/5 rounded-lg transition-all duration-300 border border-transparent hover:border-white/5">
-                                            <div className="shrink-0 w-10 h-10 rounded-full bg-[var(--accent)] text-white flex items-center justify-center shadow-lg font-bold">{item.icon}</div>
-                                            <p className="text-slate-200 text-base md:text-lg leading-relaxed tracking-normal">{item.text}</p>
+                                            <div className="shrink-0 w-12 h-12 rounded-full bg-[var(--accent)] text-white flex items-center justify-center shadow-lg font-bold">{item.icon}</div>
+                                            <p className="text-slate-200 text-lg md:text-xl leading-relaxed tracking-normal">{item.text}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -446,24 +446,24 @@
                                     <div className="relative aspect-[4/5] md:aspect-auto">
                                         <img src="https://res.cloudinary.com/dkkkjtoa9/image/upload/v1765787346/image6555_mh6v2z.png" className="w-full h-full object-cover object-top" alt="Dr Vishal Bhedurkar" />
                                         <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-[var(--primary)] to-transparent">
-                                            <p className="font-sans text-lg italic text-white opacity-90 tracking-normal">"{t.mentorQuote}"</p>
+                                            <p className="font-sans text-xl italic text-white opacity-90 tracking-normal">"{t.mentorQuote}"</p>
                                         </div>
                                     </div>
                                     <div className="p-6 md:p-8 flex flex-col justify-center">
                                         <div className="flex items-center gap-2 text-[var(--accent)] mb-3">
                                             <Award size={20} />
-                                            <span className="text-xs font-bold uppercase tracking-normal">तुमचे मार्गदर्शक</span>
+                                            <span className="text-sm font-bold uppercase tracking-normal">तुमचे मार्गदर्शक</span>
                                         </div>
                                         <h3 className="text-2xl md:text-3xl font-sans font-bold text-[var(--primary)] mb-2 tracking-normal">{t.mentorName}</h3>
                                         <div className="flex items-center gap-2 text-slate-600 mb-4">
-                                            <Briefcase size={16} />
-                                            <span className="text-sm tracking-normal">{t.mentorRole}</span>
+                                            <Briefcase size={18} />
+                                            <span className="text-base tracking-normal">{t.mentorRole}</span>
                                         </div>
-                                        <p className="text-slate-500 text-sm mb-4 tracking-normal">{t.mentorOrg}</p>
+                                        <p className="text-slate-500 text-base mb-4 tracking-normal">{t.mentorOrg}</p>
                                         <div className="flex flex-wrap gap-2">
-                                            <span className="px-3 py-1 bg-[var(--warm)] text-[var(--accent)] rounded-full text-xs font-medium tracking-normal">12+ वर्षांचा अनुभव</span>
-                                            <span className="px-3 py-1 bg-[var(--warm)] text-[var(--accent)] rounded-full text-xs font-medium tracking-normal">350+ निवड</span>
-                                            <span className="px-3 py-1 bg-[var(--warm)] text-[var(--accent)] rounded-full text-xs font-medium tracking-normal">MPSC तज्ञ</span>
+                                            <span className="px-3 py-1 bg-[var(--warm)] text-[var(--accent)] rounded-full text-sm font-medium tracking-normal">12+ वर्षांचा अनुभव</span>
+                                            <span className="px-3 py-1 bg-[var(--warm)] text-[var(--accent)] rounded-full text-sm font-medium tracking-normal">350+ निवड</span>
+                                            <span className="px-3 py-1 bg-[var(--warm)] text-[var(--accent)] rounded-full text-sm font-medium tracking-normal">MPSC तज्ञ</span>
                                         </div>
                                     </div>
                                 </div>
@@ -477,9 +477,9 @@
                             <div className="grid md:grid-cols-3 gap-4">
                                 {t.agendaList.map((item, i) => (
                                     <div key={i} className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 hover:shadow-xl hover:border-[var(--accent)] transition-all duration-300 group">
-                                        <div className="w-10 h-10 rounded-lg bg-[var(--warm)] text-[var(--accent)] flex items-center justify-center mb-4 group-hover:bg-[var(--accent)] group-hover:text-white transition-colors shadow-inner">{item.icon}</div>
-                                        <h3 className="text-base font-bold text-[var(--primary)] mb-2 tracking-normal">{item.title}</h3>
-                                        <p className="text-sm text-[var(--text-body)] leading-relaxed tracking-normal">{item.desc}</p>
+                                        <div className="w-12 h-12 rounded-lg bg-[var(--warm)] text-[var(--accent)] flex items-center justify-center mb-4 group-hover:bg-[var(--accent)] group-hover:text-white transition-colors shadow-inner">{item.icon}</div>
+                                        <h3 className="text-lg md:text-xl font-bold text-[var(--primary)] mb-2 tracking-normal">{item.title}</h3>
+                                        <p className="text-base text-[var(--text-body)] leading-relaxed tracking-normal">{item.desc}</p>
                                     </div>
                                 ))}
                             </div>
@@ -491,34 +491,34 @@
                         <div className="absolute top-0 right-0 w-1/2 h-full bg-white/5 skew-x-12 transform translate-x-20"></div>
                         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
                             <div>
-                                <h2 className="text-4xl md:text-5xl font-sans mb-4 leading-tight tracking-normal text-[var(--accent)]">{t.formTitle}</h2>
-                                <p className="text-slate-300 font-light text-lg mb-6 tracking-normal">{t.formSubtitle}</p>
+                                <h2 className="text-5xl md:text-6xl font-sans mb-4 leading-tight tracking-normal text-[var(--accent)]">{t.formTitle}</h2>
+                                <p className="text-slate-300 font-light text-xl mb-6 tracking-normal">{t.formSubtitle}</p>
                                 <ul className="space-y-3 mb-8">
                                     {["मोफत लाइव्ह इंटरएक्टिव्ह सत्र", "विशेष PDF अभ्यास साहित्य", "प्राधान्य समुपदेशन स्लॉट"].map((item, i) => (
-                                        <li key={i} className="flex items-center gap-3 text-sm text-slate-200 font-medium tracking-normal">
+                                        <li key={i} className="flex items-center gap-3 text-base text-slate-200 font-medium tracking-normal">
                                             <div className="w-2 h-2 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]"></div>{item}
                                         </li>
                                     ))}
                                 </ul>
                             </div>
                             <div className="bg-white text-[var(--text-body)] p-6 md:p-8 rounded-2xl shadow-2xl relative">
-                                <div className="absolute -top-4 -right-4 bg-[var(--accent)] text-white text-sm font-bold py-1 px-3 rounded shadow-lg uppercase tracking-normal">मोफत प्रवेश</div>
+                                <div className="absolute -top-4 -right-4 bg-[var(--accent)] text-white text-base font-bold py-1 px-3 rounded shadow-lg uppercase tracking-normal">मोफत प्रवेश</div>
                                 <form onSubmit={handleRegister} className="space-y-5">
                                     <div>
-                                        <label className="text-sm font-bold text-slate-400 uppercase tracking-normal mb-1 block">{t.name}</label>
-                                        <input required name="name" type="text" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचे पूर्ण नाव" />
+                                        <label className="text-base font-bold text-slate-400 uppercase tracking-normal mb-1 block">{t.name}</label>
+                                        <input required name="name" type="text" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 text-lg outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचे पूर्ण नाव" />
                                     </div>
                                     <div>
-                                        <label className="text-sm font-bold text-slate-400 uppercase tracking-normal mb-1 block">{t.email}</label>
-                                        <input required name="email" type="email" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचा ईमेल पत्ता" />
+                                        <label className="text-base font-bold text-slate-400 uppercase tracking-normal mb-1 block">{t.email}</label>
+                                        <input required name="email" type="email" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 text-lg outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचा ईमेल पत्ता" />
                                     </div>
                                     <div>
-                                        <label className="text-sm font-bold text-slate-400 uppercase tracking-normal mb-1 block">{t.phone}</label>
-                                        <input required name="phone" type="tel" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचा फोन नंबर" />
+                                        <label className="text-base font-bold text-slate-400 uppercase tracking-normal mb-1 block">{t.phone}</label>
+                                        <input required name="phone" type="tel" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 text-lg outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचा फोन नंबर" />
                                     </div>
-                                    <button type="submit" className="w-full py-4 bg-[var(--accent)] text-white font-bold text-lg tracking-normal uppercase hover:brightness-110 transition-all rounded mt-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">{t.formButton}</button>
-                                    <p className="text-center text-sm text-[var(--accent)] font-semibold mt-2 tracking-normal">🎁 {t.freeStudyMaterial}</p>
-                                    <p className="text-center text-xs text-slate-400 mt-1 tracking-normal">मर्यादित जागा उपलब्ध. प्रथम येणाऱ्यास प्राधान्य.</p>
+                                    <button type="submit" className="w-full py-4 bg-[var(--accent)] text-white font-bold text-xl tracking-normal uppercase hover:brightness-110 transition-all rounded mt-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">{t.formButton}</button>
+                                    <p className="text-center text-base text-[var(--accent)] font-semibold mt-2 tracking-normal">🎁 {t.freeStudyMaterial}</p>
+                                    <p className="text-center text-sm text-slate-400 mt-1 tracking-normal">मर्यादित जागा उपलब्ध. प्रथम येणाऱ्यास प्राधान्य.</p>
                                 </form>
                             </div>
                         </div>
@@ -526,8 +526,8 @@
 
                     <footer className="bg-[var(--primary)] text-slate-400 py-10 px-6 border-t border-white/10 text-center md:text-left">
                         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-                            <div className="font-serif text-white text-lg">Dnyanjyoti Education</div>
-                            <div className="text-sm tracking-normal uppercase flex gap-6">
+                            <div className="font-serif text-white text-xl">Dnyanjyoti Education</div>
+                            <div className="text-base tracking-normal uppercase flex gap-6">
                                 <a href="#" className="hover:text-[var(--accent)] transition-colors">गोपनीयता</a>
                                 <a href="#" className="hover:text-[var(--accent)] transition-colors">अटी</a>
                                 <a href="#" className="hover:text-[var(--accent)] transition-colors">संपर्क</a>
