@@ -5,24 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Noto Sans Devanagari', 'Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] },
-                    colors: { primary: '#233D4D', accent: '#E86C3F', surface: '#F8F9FA', warm: '#FFF5F0', glass: 'rgba(255, 255, 255, 0.8)' },
-                    animation: { 'fade-up': 'fadeUp 0.8s ease-out forwards', 'fade-in': 'fadeIn 0.5s ease-out', 'pulse-glow': 'pulseGlow 2s infinite' },
+                    colors: { primary: '#233D4D', accent: '#E86C3F', surface: '#F8F9FA', warm: '#FFF5F0', glass: 'rgba(255, 255, 255, 0.8)', danger: '#DC2626' },
+                    animation: { 
+                        'fade-up': 'fadeUp 0.8s ease-out forwards', 
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s linear infinite'
+                    },
                     keyframes: { 
                         fadeUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }, 
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        pulseGlow: { '0%, 100%': { boxShadow: '0 0 5px #E86C3F, 0 0 10px #E86C3F' }, '50%': { boxShadow: '0 0 20px #E86C3F, 0 0 30px #E86C3F' } }
+                        pulseGlow: { '0%, 100%': { boxShadow: '0 0 5px #E86C3F, 0 0 10px #E86C3F, 0 0 20px #E86C3F' }, '50%': { boxShadow: '0 0 10px #E86C3F, 0 0 25px #E86C3F, 0 0 40px #E86C3F' } },
+                        shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } }
                     }
                 }
             }
         }
     </script>
+    <script type="importmap">
+    { "imports": { "react": "https://esm.sh/react@18.2.0", "react-dom/client": "https://esm.sh/react-dom@18.2.0/client", "lucide-react": "https://esm.sh/lucide-react@0.300.0", "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js", "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js", "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js" } }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <title>Dnyanjyoti Education | 120+ Marks Strategy Workshop (Marathi)</title>
     <style>
         body { font-family: 'Noto Sans Devanagari', 'Inter', sans-serif; background-color: #FFFFFF; color: #4A4A4A; }
@@ -35,18 +46,21 @@
         .bg-pattern-dots { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 24px 24px; }
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #E86C3F; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .glow-badge {
+            animation: pulseGlow 2s ease-in-out infinite;
+            background: linear-gradient(90deg, #E86C3F, #FF8A5B, #E86C3F);
+            background-size: 200% 100%;
+            animation: shimmer 2s linear infinite, pulseGlow 2s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 5px #E86C3F, 0 0 10px #E86C3F, 0 0 15px rgba(232, 108, 63, 0.5); }
+            50% { box-shadow: 0 0 10px #E86C3F, 0 0 20px #E86C3F, 0 0 30px rgba(232, 108, 63, 0.7); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
     </style>
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"></script>
-
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.min.js"></script>
 </head>
 <body>
     <div id="root">
@@ -56,38 +70,29 @@
         </div>
     </div>
     <script type="text/babel" data-type="module">
-        const { useState, useEffect, useRef } = React;
-        const { 
-            CheckCircle, Play, Pause, MessageCircle, Send, ChevronRight, Download, 
-            ShieldCheck, Settings, Lock, Unlock, Video, X, Star, Zap, Target, 
-            Book, Brain, Scale, FileText, Eye, RotateCcw, Instagram, Facebook, 
-            Users, ArrowLeft, Trash2, Edit2, Home, MapPin, Calendar, HelpCircle, TrendingUp, Quote, Plus 
-        } = LucideReact;
+        import React, { useState, useEffect, useRef } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { CheckCircle, Play, Pause, MessageCircle, Send, ChevronRight, Download, ShieldCheck, Settings, Lock, Unlock, Video, X, Star, Zap, Target, Book, Brain, Scale, FileText, Eye, RotateCcw, Instagram, Facebook, Users, ArrowLeft, Trash2, Edit2, Home, MapPin, Calendar, HelpCircle, TrendingUp, Plus, Image, Quote, Award, Briefcase } from 'lucide-react';
 
-        // --- FIREBASE SETUP ---
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth.getAuth(app);
-        const db = firebase.firestore.getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let db = null; let auth = null; let firestoreFuncs = {};
         
-        // Collections
-        const LEADS_COLLECTION = 'leads_marathi'; 
+        const APP_ID = 'dnyanjyoti_v2';
         const SETTINGS_DOC_ID = 'settings_global';
-        const TESTIMONIALS_COLLECTION = 'testimonials_marathi';
+        const LEADS_COLLECTION = 'leads_marathi';
+        const TESTIMONIALS_COLLECTION = 'testimonials';
 
         const t = {
             heroSubtitle: "आमच्या विद्यार्थ्यांनी आधीच मिळून दाखवले आहे.",
             heroTitle1: "120+ मार्क्स येत नाहीत",
             heroTitle2: "असं कोण म्हणतं?",
-            heroExams: [
-                "MPSC RAJYASEVA PRELIMS 2026",
-                "UPSC CSE PRELIMS 2026",
+            heroDesc: [
+                "MPSC Rajyaseva Prelims 2026",
+                "UPSC CSE Prelims 2026",
                 "अत्यंत महत्वाचा मोफत वर्कशॉप"
             ],
-            heroFeature: "राहण्याच्या आणि जेवणाच्या सुविधेसोबत",
+            heroFeature: "✨ राहण्याच्या आणि जेवणाच्या सुविधेसोबत ✨",
             secureSpot: "आता नोंदणी करा",
-            freeMaterial: "मोफत अभ्यास साहित्य मिळवण्यासाठी नोंदणी करा",
+            freeStudyMaterial: "नोंदणी करा आणि मोफत अभ्यास साहित्य मिळवा",
             stat1: "वर्षांचा अनुभव", stat2: "अधिकाऱ्यांना मार्गदर्शन", stat3: "अंतिम निवड", stat4: "केंद्रे",
             whyTitle: "वर्कशॉप का अटेंड करावा?",
             whySubtitle: "तुमच्या २०२६ च्या परीक्षेसाठी रणनीतीत काय बदल करावेत?",
@@ -98,9 +103,9 @@
                 { icon: <CheckCircle size={20}/>, text: "Test Series, Smart Revision आणि प्रश्न सोडवताना Elimination ची योग्य पद्धत." },
                 { icon: <Star size={20}/>, text: "पदवीच्या शेवटच्या वर्षाला असणाऱ्या विद्यार्थ्यांसाठी ही सुवर्णसंधी आहे." }
             ],
-            mentorTitle: "मार्गदर्शकाबद्दल",
-            mentorName: "डॉ. विशाल भेदूरकर",
-            mentorRole: "वित्त व लेखा अधिकारी, महाराष्ट्र शासन",
+            mentorName: "Dr. Vishal Bhedurkar",
+            mentorRole: "वित्त आणि लेखा अधिकारी",
+            mentorOrg: "महाराष्ट्र राज्य शासन",
             mentorQuote: "यश म्हणजे जास्त वाचणे नव्हे, तर स्पष्टपणे विचार करणे.",
             agendaTitle: "या वर्कशॉपमध्ये काय मिळेल?",
             agendaSubtitle: "वर्कशॉपची वैशिष्ट्ये",
@@ -114,9 +119,9 @@
             ],
             formTitle: "नोंदणी", formSubtitle: "२०२६ च्या स्ट्रॅटेजी वर्कशॉपसाठी आपली जागा निश्चित करा.", formButton: "आता नोंदणी करा",
             thankYouTitle: "नोंदणी यशस्वी झाली", thankYouDesc: "आम्ही वर्कशॉपसाठी तुमची जागा राखीव ठेवली आहे.",
-            testimonialsTitle: "विद्यार्थ्यांचे मनोगत",
             name: "पूर्ण नाव", email: "ईमेल पत्ता", phone: "फोन नंबर",
-            watchFirst: "हे आधी पहा", nextSteps: "पुढील पायऱ्या", joinWhatsApp: "WhatsApp ग्रुपमध्ये सामील व्हा", joinGroup: "ग्रुपमध्ये सामील व्हा", followUpdates: "अपडेट्ससाठी फॉलो करा"
+            watchFirst: "हे आधी पहा", nextSteps: "पुढील पायऱ्या", joinWhatsApp: "WhatsApp ग्रुपमध्ये सामील व्हा", joinGroup: "ग्रुपमध्ये सामील व्हा", followUpdates: "अपडेट्ससाठी फॉलो करा",
+            testimonialsTitle: "आमचे विद्यार्थी काय म्हणतात", testimonialsSubtitle: "यशस्वी विद्यार्थ्यांचे अनुभव"
         };
 
         const DEFAULT_SETTINGS = {
@@ -124,11 +129,11 @@
             videoConfig: { type: 'none', src: '', title: 'Message from Dr. Vishal' },
             pdfConfig: { url: '', title: 'Study Material PDF' },
             socialLinks: { whatsapp: '#', telegram: '#', instagram: '#', facebook: '#' },
-            adminPasskey: '' 
+            adminPasskey: ''
         };
 
-        const GlassCard = ({ children, className = "" }) => ( <div className={`glass-panel rounded-lg p-5 md:p-6 hover:shadow-lg transition-all duration-500 ${className}`}>{children}</div> );
-        const SectionHeader = ({ title, subtitle, align = "center", light = false }) => ( <div className={`mb-10 ${align === 'center' ? 'text-center' : 'text-left'}`}><h2 className={`text-3xl md:text-4xl font-serif font-bold mb-3 tracking-normal leading-tight ${light ? 'text-white' : 'text-[var(--primary)]'}`}>{title}</h2><div className={`h-1 w-16 bg-[var(--accent)] mb-3 ${align === 'center' ? 'mx-auto' : ''}`}></div>{subtitle && <p className={`text-lg tracking-normal ${light ? 'text-slate-300' : 'text-[var(--text-body)]'}`}>{subtitle}</p>}</div> );
+        const GlassCard = ({ children, className = "" }) => ( <div className={`glass-panel rounded-lg p-4 md:p-6 hover:shadow-lg transition-all duration-500 ${className}`}>{children}</div> );
+        const SectionHeader = ({ title, subtitle, align = "center", light = false }) => ( <div className={`mb-12 ${align === 'center' ? 'text-center' : 'text-left'}`}><h2 className={`text-3xl md:text-4xl font-sans font-bold mb-3 tracking-normal leading-tight ${light ? 'text-white' : 'text-[var(--primary)]'}`}>{title}</h2><div className={`h-1 w-16 bg-[var(--accent)] mb-3 ${align === 'center' ? 'mx-auto' : ''}`}></div>{subtitle && <p className={`text-lg tracking-normal ${light ? 'text-slate-300' : 'text-[var(--text-body)]'}`}>{subtitle}</p>}</div> );
         
         const CustomVideoPlayer = ({ videoSource }) => {
             const videoRef = useRef(null); const [isPlaying, setIsPlaying] = useState(false); const [showControls, setShowControls] = useState(true);
@@ -136,7 +141,26 @@
             return ( <div className="relative w-full aspect-video group bg-black rounded-lg overflow-hidden shadow-2xl border-4 border-white" onMouseEnter={() => setShowControls(true)} onMouseLeave={() => isPlaying && setShowControls(false)}>{!videoSource.src ? ( <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-500"><Video size={48} className="mb-4 opacity-50" /><p>No Video Configured</p></div> ) : ( <video ref={videoRef} src={videoSource.src} className="w-full h-full object-cover" onClick={togglePlay} onEnded={() => setIsPlaying(false)} playsInline /> )}{showControls && videoSource.src && ( <div className="absolute inset-0 bg-black/40 flex flex-col justify-between p-6 transition-opacity duration-300"><div className="absolute inset-0 flex items-center justify-center pointer-events-none"><button onClick={togglePlay} className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center pointer-events-auto hover:scale-110 transition-transform">{isPlaying ? <Pause className="fill-white text-white ml-1" /> : <Play className="fill-white text-white ml-1" />}</button></div><div className="mt-auto pointer-events-none"><p className="text-white font-bold text-lg drop-shadow-md tracking-normal">{videoSource.title}</p></div></div> )}</div> );
         };
 
-        const App = () => {
+        const TestimonialCard = ({ testimonial }) => (
+            <div className="bg-white rounded-xl p-5 shadow-md border border-slate-100 hover:shadow-lg transition-all">
+                <div className="flex items-start gap-3 mb-3">
+                    {testimonial.imageUrl ? (
+                        <img src={testimonial.imageUrl} alt={testimonial.name} className="w-12 h-12 rounded-full object-cover border-2 border-[var(--accent)]" />
+                    ) : (
+                        <div className="w-12 h-12 rounded-full bg-[var(--accent)] text-white flex items-center justify-center font-bold text-lg">
+                            {testimonial.name?.charAt(0) || 'S'}
+                        </div>
+                    )}
+                    <div>
+                        <h4 className="font-bold text-[var(--primary)] text-sm tracking-normal">{testimonial.name}</h4>
+                        {testimonial.role && <p className="text-xs text-slate-500 tracking-normal">{testimonial.role}</p>}
+                    </div>
+                </div>
+                <p className="text-slate-600 text-sm leading-relaxed italic tracking-normal">"{testimonial.text}"</p>
+            </div>
+        );
+
+        const App = ({ isOffline }) => {
             const [currentPage, setCurrentPage] = useState('landing');
             const [settings, setSettings] = useState(DEFAULT_SETTINGS);
             const [isAdmin, setIsAdmin] = useState(false);
@@ -144,63 +168,47 @@
             const [passkeyInput, setPasskeyInput] = useState('');
             const [leads, setLeads] = useState([]);
             const [testimonials, setTestimonials] = useState([]);
-            const [user, setUser] = useState(null);
+            const [showTestimonialForm, setShowTestimonialForm] = useState(false);
+            const [newTestimonial, setNewTestimonial] = useState({ name: '', role: '', text: '', imageUrl: '' });
 
-            // Paths
-            const getSettingsDoc = () => firebase.firestore.doc(db, 'artifacts', appId, 'public', 'data', 'config', SETTINGS_DOC_ID);
-            const getLeadsCollection = () => firebase.firestore.collection(db, 'artifacts', appId, 'public', 'data', LEADS_COLLECTION);
-            const getTestimonialsCollection = () => firebase.firestore.collection(db, 'artifacts', appId, 'public', 'data', TESTIMONIALS_COLLECTION);
+            const getLeadsCollection = () => firestoreFuncs.collection(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION);
+            const getSettingsDoc = () => firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', 'config', SETTINGS_DOC_ID);
+            const getTestimonialsCollection = () => firestoreFuncs.collection(db, 'artifacts', APP_ID, 'public', 'data', TESTIMONIALS_COLLECTION);
 
             useEffect(() => {
-                const initAuth = async () => {
+                if (isOffline || !db) return;
+                const doAuth = async () => {
                     try {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await firebase.auth.signInWithCustomToken(auth, __initial_auth_token);
-                        } else {
-                            await firebase.auth.signInAnonymously(auth);
-                        }
-                    } catch (e) {
-                        console.error("Auth error:", e);
-                    }
+                        const { signInAnonymously } = await import('firebase/auth');
+                        await signInAnonymously(auth);
+                        const unsubSettings = firestoreFuncs.onSnapshot(getSettingsDoc(), (doc) => {
+                            if (doc.exists()) setSettings(prev => ({ ...prev, ...doc.data() }));
+                        });
+                        const unsubTestimonials = firestoreFuncs.onSnapshot(getTestimonialsCollection(), (snapshot) => {
+                            const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                            setTestimonials(items);
+                        });
+                        return () => { unsubSettings(); unsubTestimonials(); };
+                    } catch (err) { console.error("Auth Failed", err); }
                 };
-                initAuth();
-
-                const unsubscribeAuth = firebase.auth.onAuthStateChanged(auth, (u) => {
-                    setUser(u);
-                });
-                return () => unsubscribeAuth();
-            }, []);
-
-            useEffect(() => {
-                if (!user) return;
-                const unsubSettings = firebase.firestore.onSnapshot(getSettingsDoc(), (doc) => {
-                    if (doc.exists()) setSettings(prev => ({ ...prev, ...doc.data() }));
-                    else firebase.firestore.setDoc(getSettingsDoc(), DEFAULT_SETTINGS).catch(console.error);
-                });
-
-                const unsubTestimonials = firebase.firestore.onSnapshot(getTestimonialsCollection(), (snapshot) => {
-                    setTestimonials(snapshot.docs.map(d => ({id: d.id, ...d.data()})));
-                });
-
-                return () => { unsubSettings(); unsubTestimonials(); };
-            }, [user]);
+                doAuth();
+            }, [isOffline]);
 
             const fetchLeads = async () => {
-                if (!user) return;
+                if (!db) return;
                 try {
-                    const q = firebase.firestore.query(getLeadsCollection());
-                    const snap = await firebase.firestore.getDocs(q);
-                    const leadsData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                    leadsData.sort((a, b) => new Date(b.registeredAt) - new Date(a.registeredAt));
-                    setLeads(leadsData);
-                } catch (e) { console.error("Leads error", e); }
+                    const q = firestoreFuncs.query(getLeadsCollection(), firestoreFuncs.orderBy("registeredAt", "desc"));
+                    const snap = await firestoreFuncs.getDocs(q);
+                    setLeads(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+                } catch (e) { console.error("Leads error", e); alert("Please create Firestore Index for proper sorting."); }
             };
 
             const handleAdminAction = async () => {
+                if(isOffline) { alert("Offline Mode"); return; }
                 if (!settings.adminPasskey) {
                     if (!passkeyInput.trim()) return alert("Enter a valid passkey");
                     try {
-                        await firebase.firestore.setDoc(getSettingsDoc(), { adminPasskey: passkeyInput.trim() }, { merge: true });
+                        await firestoreFuncs.setDoc(getSettingsDoc(), { adminPasskey: passkeyInput.trim() }, { merge: true });
                         setIsAdmin(true); setShowLogin(false); fetchLeads();
                     } catch(e) { alert("Setup failed: " + e.message); }
                 } else {
@@ -211,30 +219,37 @@
 
             const handleRegister = async (e) => {
                 e.preventDefault();
-                if (!user) return;
                 const formData = new FormData(e.target);
                 const data = { name: formData.get('name'), email: formData.get('email'), phone: formData.get('phone'), registeredAt: new Date().toISOString(), source: 'web_v2_premium_mr' };
+                if (db && !isOffline) { await firestoreFuncs.addDoc(getLeadsCollection(), data); }
+                setTimeout(() => { window.scrollTo(0,0); setCurrentPage('thankyou'); }, 800);
+            };
+
+            const handleAddTestimonial = async () => {
+                if (!newTestimonial.name.trim() || !newTestimonial.text.trim()) {
+                    alert("Name and testimonial text are required");
+                    return;
+                }
                 try {
-                    await firebase.firestore.addDoc(getLeadsCollection(), data);
-                    setTimeout(() => { window.scrollTo(0,0); setCurrentPage('thankyou'); }, 800);
-                } catch(e) { console.error(e); alert("Registration failed"); }
+                    await firestoreFuncs.addDoc(getTestimonialsCollection(), {
+                        ...newTestimonial,
+                        createdAt: new Date().toISOString()
+                    });
+                    setNewTestimonial({ name: '', role: '', text: '', imageUrl: '' });
+                    setShowTestimonialForm(false);
+                } catch (e) {
+                    alert("Failed to add testimonial: " + e.message);
+                }
             };
 
-            const handleAddTestimonial = async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                await firebase.firestore.addDoc(getTestimonialsCollection(), {
-                    name: formData.get('t_name'),
-                    role: formData.get('t_role'),
-                    message: formData.get('t_message'),
-                    image: formData.get('t_image') || 'https://via.placeholder.com/100',
-                    createdAt: new Date().toISOString()
-                });
-                e.target.reset();
-            };
-
-            const deleteTestimonial = async (id) => {
-                await firebase.firestore.deleteDoc(firebase.firestore.doc(db, 'artifacts', appId, 'public', 'data', TESTIMONIALS_COLLECTION, id));
+            const handleDeleteTestimonial = async (id) => {
+                if (confirm("Delete this testimonial?")) {
+                    try {
+                        await firestoreFuncs.deleteDoc(firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', TESTIMONIALS_COLLECTION, id));
+                    } catch (e) {
+                        alert("Failed to delete: " + e.message);
+                    }
+                }
             };
 
             const AdminPanel = () => (
@@ -249,168 +264,313 @@
                                 <button onClick={() => setCurrentPage('landing')} className="p-3 bg-slate-50 rounded border hover:bg-slate-100 text-sm font-medium tracking-normal">View Site</button>
                                 <button onClick={() => setCurrentPage('thankyou')} className="p-3 bg-slate-50 rounded border hover:bg-slate-100 text-sm font-medium tracking-normal">View Thank You</button>
                             </div>
-                            
-                            {/* Testimonials Management */}
-                            <div>
-                                <h3 className="text-xs font-bold uppercase text-slate-400 mb-3 tracking-normal">Manage Testimonials</h3>
-                                <form onSubmit={handleAddTestimonial} className="space-y-2 mb-4">
-                                    <input name="t_name" placeholder="Student Name" required className="w-full border p-2 rounded text-sm"/>
-                                    <input name="t_role" placeholder="Role/Exam" className="w-full border p-2 rounded text-sm"/>
-                                    <input name="t_image" placeholder="Image URL (optional)" className="w-full border p-2 rounded text-sm"/>
-                                    <textarea name="t_message" placeholder="Message" required className="w-full border p-2 rounded text-sm"></textarea>
-                                    <button type="submit" className="w-full bg-[var(--accent)] text-white p-2 rounded text-sm font-bold flex items-center justify-center gap-2 tracking-normal"><Plus size={14}/> Add Testimonial</button>
-                                </form>
-                                <div className="space-y-2 max-h-40 overflow-y-auto">
-                                    {testimonials.map(t => (
-                                        <div key={t.id} className="flex justify-between items-center p-2 border rounded bg-slate-50">
-                                            <span className="text-xs font-bold truncate w-32">{t.name}</span>
-                                            <button onClick={() => deleteTestimonial(t.id)} className="text-red-500 hover:text-red-700"><Trash2 size={14}/></button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
                             <div>
                                 <h3 className="text-xs font-bold uppercase text-slate-400 mb-3 tracking-normal">Visual Identity (Shared)</h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div><label className="text-xs text-slate-500 mb-1 block tracking-normal">Primary</label><input type="color" value={settings.theme.primary} onChange={(e) => firebase.firestore.setDoc(getSettingsDoc(), {theme: {...settings.theme, primary: e.target.value}}, {merge:true})} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
-                                    <div><label className="text-xs text-slate-500 mb-1 block tracking-normal">Accent</label><input type="color" value={settings.theme.accent} onChange={(e) => firebase.firestore.setDoc(getSettingsDoc(), {theme: {...settings.theme, accent: e.target.value}}, {merge:true})} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
+                                    <div><label className="text-xs text-slate-500 mb-1 block tracking-normal">Primary</label><input type="color" value={settings.theme.primary} onChange={(e) => firestoreFuncs.setDoc(getSettingsDoc(), {theme: {...settings.theme, primary: e.target.value}}, {merge:true})} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
+                                    <div><label className="text-xs text-slate-500 mb-1 block tracking-normal">Accent</label><input type="color" value={settings.theme.accent} onChange={(e) => firestoreFuncs.setDoc(getSettingsDoc(), {theme: {...settings.theme, accent: e.target.value}}, {merge:true})} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
                                 </div>
                             </div>
                             <div>
                                 <div className="flex justify-between items-center mb-3">
-                                    <h3 className="text-xs font-bold uppercase text-slate-400 tracking-normal">Recent Leads ({leads.length})</h3>
+                                    <h3 className="text-xs font-bold uppercase text-slate-400 tracking-normal">Marathi Leads ({leads.length})</h3>
                                     <button onClick={fetchLeads} className="text-xs text-[var(--accent)] hover:underline tracking-normal">Refresh</button>
                                 </div>
                                 <div className="bg-slate-50 rounded border border-slate-100 max-h-60 overflow-y-auto">
                                     {leads.length===0 ? <p className="p-4 text-xs text-slate-400 text-center tracking-normal">No leads yet.</p> : leads.map(l => ( <div key={l.id} className="p-3 border-b border-slate-100 last:border-0 hover:bg-white text-sm"><div className="font-bold text-slate-700 tracking-normal">{l.name}</div><div className="text-slate-500 text-xs flex justify-between tracking-normal"><span>{l.phone}</span><span className="text-slate-300">{new Date(l.registeredAt).toLocaleDateString()}</span></div></div> ))}
                                 </div>
                             </div>
+                            <div>
+                                <div className="flex justify-between items-center mb-3">
+                                    <h3 className="text-xs font-bold uppercase text-slate-400 tracking-normal">Testimonials ({testimonials.length})</h3>
+                                    <button onClick={() => setShowTestimonialForm(true)} className="text-xs bg-[var(--accent)] text-white px-2 py-1 rounded hover:brightness-110 flex items-center gap-1"><Plus size={12}/> Add</button>
+                                </div>
+                                {showTestimonialForm && (
+                                    <div className="bg-slate-50 p-4 rounded border mb-4 space-y-3">
+                                        <input type="text" placeholder="Name *" value={newTestimonial.name} onChange={(e) => setNewTestimonial({...newTestimonial, name: e.target.value})} className="w-full p-2 border rounded text-sm" />
+                                        <input type="text" placeholder="Role (optional)" value={newTestimonial.role} onChange={(e) => setNewTestimonial({...newTestimonial, role: e.target.value})} className="w-full p-2 border rounded text-sm" />
+                                        <input type="url" placeholder="Image URL (optional)" value={newTestimonial.imageUrl} onChange={(e) => setNewTestimonial({...newTestimonial, imageUrl: e.target.value})} className="w-full p-2 border rounded text-sm" />
+                                        <textarea placeholder="Testimonial text *" value={newTestimonial.text} onChange={(e) => setNewTestimonial({...newTestimonial, text: e.target.value})} className="w-full p-2 border rounded text-sm" rows={3}></textarea>
+                                        <div className="flex gap-2">
+                                            <button onClick={handleAddTestimonial} className="flex-1 bg-[var(--primary)] text-white py-2 rounded text-sm">Save</button>
+                                            <button onClick={() => setShowTestimonialForm(false)} className="px-4 py-2 text-slate-500 text-sm">Cancel</button>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="bg-slate-50 rounded border border-slate-100 max-h-60 overflow-y-auto">
+                                    {testimonials.length===0 ? <p className="p-4 text-xs text-slate-400 text-center tracking-normal">No testimonials yet.</p> : testimonials.map(t => (
+                                        <div key={t.id} className="p-3 border-b border-slate-100 last:border-0 hover:bg-white text-sm">
+                                            <div className="flex justify-between items-start">
+                                                <div className="font-bold text-slate-700 tracking-normal">{t.name}</div>
+                                                <button onClick={() => handleDeleteTestimonial(t.id)} className="text-red-400 hover:text-red-600"><Trash2 size={14}/></button>
+                                            </div>
+                                            <p className="text-slate-500 text-xs mt-1 line-clamp-2 tracking-normal">"{t.text}"</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             );
 
-            if (currentPage === 'thankyou') return ( <div style={{'--primary': settings.theme.primary, '--accent': settings.theme.accent}} className="min-h-screen bg-warm flex flex-col relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-2 bg-[var(--accent)] z-10"></div><div className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-12 animate-fade-up"><div className="text-center mb-12"><div className="w-20 h-20 rounded-full border-2 border-[var(--accent)] flex items-center justify-center mx-auto mb-6 text-[var(--accent)] bg-white shadow-xl"><CheckCircle size={40} /></div><h1 className="text-4xl md:text-5xl font-serif text-[var(--primary)] mb-4 tracking-normal leading-tight">{t.thankYouTitle}</h1><p className="text-[var(--text-body)] text-lg max-w-md mx-auto tracking-normal">{t.thankYouDesc}</p></div><div className="grid md:grid-cols-2 gap-12 items-start mb-16"><div className="space-y-8">{settings.pdfConfig.url && ( <GlassCard className="border-l-4 border-l-[var(--accent)]"><h3 className="font-serif font-bold text-xl text-[var(--primary)] mb-2 tracking-normal">Exclusive Material</h3><p className="text-[var(--text-body)] mb-6 text-sm tracking-normal">Download the descriptive pattern guide prepared by Dr. Vishal.</p><a href={settings.pdfConfig.url} target="_blank" className="flex items-center justify-center w-full py-4 bg-[var(--primary)] text-white hover:bg-slate-800 transition-colors rounded text-sm tracking-normal font-bold"><Download size={18} className="mr-2"/> Download PDF</a></GlassCard> )}<div><h3 className="font-bold text-lg text-[var(--primary)] mb-4 flex items-center gap-2 tracking-normal"><Video size={20} className="text-[var(--accent)]"/> {t.watchFirst}</h3><CustomVideoPlayer videoSource={settings.videoConfig} /></div></div><div><h3 className="font-bold text-lg text-[var(--primary)] mb-6 tracking-normal">{t.nextSteps}</h3><div className="space-y-6"><div className="flex gap-4"><div className="w-8 h-8 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0">1</div><div><p className="font-medium text-[var(--primary)] tracking-normal">{t.joinWhatsApp}</p><a href="https://chat.whatsapp.com/J20Kcggb8XP7aL2rCdNjxA" target="_blank" className="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold hover:brightness-110 shadow-md shadow-green-200 mt-2 transition-transform transform hover:-translate-y-0.5 tracking-normal"><MessageCircle size={18} /> {t.joinGroup}</a></div></div><div className="flex gap-4"><div className="w-8 h-8 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0">2</div><div><p className="font-medium text-[var(--primary)] tracking-normal">{t.followUpdates}</p><div className="flex gap-3 mt-3"><a href={settings.socialLinks.instagram} target="_blank" className="p-3 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white rounded-lg hover:opacity-90 shadow-sm transition-transform hover:-translate-y-0.5"><Instagram size={20} /></a><a href={settings.socialLinks.facebook} target="_blank" className="p-3 bg-[#1877F2] text-white rounded-lg hover:brightness-110 shadow-sm transition-transform hover:-translate-y-0.5"><Facebook size={20} /></a><a href={settings.socialLinks.telegram} target="_blank" className="p-3 bg-[#0088cc] text-white rounded-lg hover:brightness-110 shadow-sm transition-transform hover:-translate-y-0.5"><Send size={20} /></a></div></div></div></div><div className="mt-12 pt-8 border-t border-slate-200"><button onClick={() => setCurrentPage('landing')} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-[var(--primary)] transition-colors tracking-normal"><Home size={16}/> मुखपृष्ठावर जा</button></div></div>
-            
-            {/* Testimonials Section (Marathi) */}
-            {testimonials.length > 0 && (
-                <div className="mt-16 pt-16 border-t border-slate-200">
-                    <h2 className="text-3xl font-serif font-bold text-[var(--primary)] text-center mb-10 tracking-normal">{t.testimonialsTitle}</h2>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {testimonials.map(item => (
-                            <div key={item.id} className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                                <Quote size={24} className="text-[var(--accent)] mb-4 opacity-50"/>
-                                <p className="text-slate-600 mb-6 italic tracking-normal">"{item.message}"</p>
-                                <div className="flex items-center gap-3">
-                                    <img src={item.image} alt={item.name} className="w-10 h-10 rounded-full object-cover"/>
-                                    <div>
-                                        <p className="font-bold text-[var(--primary)] text-sm tracking-normal">{item.name}</p>
-                                        <p className="text-xs text-slate-400 tracking-normal">{item.role}</p>
-                                    </div>
+            if (currentPage === 'thankyou') return (
+                <div style={{'--primary': settings.theme.primary, '--accent': settings.theme.accent}} className="min-h-screen bg-warm flex flex-col relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-2 bg-[var(--accent)] z-10"></div>
+                    <div className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-12 animate-fade-up">
+                        <div className="text-center mb-12">
+                            <div className="w-20 h-20 rounded-full border-2 border-[var(--accent)] flex items-center justify-center mx-auto mb-6 text-[var(--accent)] bg-white shadow-xl"><CheckCircle size={40} /></div>
+                            <h1 className="text-4xl md:text-5xl font-sans text-[var(--primary)] mb-4 tracking-normal leading-tight">{t.thankYouTitle}</h1>
+                            <p className="text-[var(--text-body)] text-lg max-w-md mx-auto tracking-normal">{t.thankYouDesc}</p>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-12 items-start">
+                            <div className="space-y-8">
+                                {settings.pdfConfig.url && (
+                                    <GlassCard className="border-l-4 border-l-[var(--accent)]">
+                                        <h3 className="font-sans font-bold text-xl text-[var(--primary)] mb-2 tracking-normal">विशेष साहित्य</h3>
+                                        <p className="text-[var(--text-body)] mb-6 text-sm tracking-normal">Dr. Vishal यांनी तयार केलेली descriptive pattern guide डाउनलोड करा.</p>
+                                        <a href={settings.pdfConfig.url} target="_blank" className="flex items-center justify-center w-full py-4 bg-[var(--primary)] text-white hover:bg-slate-800 transition-colors rounded text-sm tracking-normal font-bold"><Download size={18} className="mr-2"/> PDF डाउनलोड करा</a>
+                                    </GlassCard>
+                                )}
+                                <div>
+                                    <h3 className="font-bold text-lg text-[var(--primary)] mb-4 flex items-center gap-2 tracking-normal"><Video size={20} className="text-[var(--accent)]"/> {t.watchFirst}</h3>
+                                    <CustomVideoPlayer videoSource={settings.videoConfig} />
                                 </div>
                             </div>
-                        ))}
+                            <div>
+                                <h3 className="font-bold text-lg text-[var(--primary)] mb-6 tracking-normal">{t.nextSteps}</h3>
+                                <div className="space-y-6">
+                                    <div className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0">1</div>
+                                        <div>
+                                            <p className="font-medium text-[var(--primary)] tracking-normal">{t.joinWhatsApp}</p>
+                                            <a href="https://chat.whatsapp.com/J20Kcggb8XP7aL2rCdNjxA" target="_blank" className="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold hover:brightness-110 shadow-md shadow-green-200 mt-2 transition-transform transform hover:-translate-y-0.5 tracking-normal"><MessageCircle size={18} /> {t.joinGroup}</a>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-full bg-blue-100 text-[var(--primary)] flex items-center justify-center font-bold shrink-0">2</div>
+                                        <div>
+                                            <p className="font-medium text-[var(--primary)] tracking-normal">{t.followUpdates}</p>
+                                            <div className="flex gap-3 mt-3">
+                                                <a href={settings.socialLinks.instagram} target="_blank" className="p-3 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white rounded-lg hover:opacity-90 shadow-sm transition-transform hover:-translate-y-0.5"><Instagram size={20} /></a>
+                                                <a href={settings.socialLinks.facebook} target="_blank" className="p-3 bg-[#1877F2] text-white rounded-lg hover:brightness-110 shadow-sm transition-transform hover:-translate-y-0.5"><Facebook size={20} /></a>
+                                                <a href={settings.socialLinks.telegram} target="_blank" className="p-3 bg-[#0088cc] text-white rounded-lg hover:brightness-110 shadow-sm transition-transform hover:-translate-y-0.5"><Send size={20} /></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-12 pt-8 border-t border-slate-200">
+                                    <button onClick={() => setCurrentPage('landing')} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-[var(--primary)] transition-colors tracking-normal"><Home size={16}/> मुखपृष्ठावर जा</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Testimonials Section */}
+                        {testimonials.length > 0 && (
+                            <div className="mt-16 pt-12 border-t border-slate-200">
+                                <SectionHeader title={t.testimonialsTitle} subtitle={t.testimonialsSubtitle} />
+                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {testimonials.map(testimonial => (
+                                        <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
+                    {isAdmin && <AdminPanel />}
+                    {!isAdmin && ( <button onClick={() => setShowLogin(true)} className="fixed bottom-4 right-4 p-2 text-slate-300 hover:text-slate-400 transition-colors"><Lock size={16} /></button> )}
                 </div>
-            )}
-            
-            </div></div>{isAdmin && <AdminPanel />}{!isAdmin && ( <button onClick={() => setShowLogin(true)} className="fixed bottom-4 right-4 p-2 text-slate-300 hover:text-slate-400 transition-colors"><Lock size={16} /></button> )}</div> );
+            );
 
             return (
                 <div style={{'--primary': settings.theme.primary, '--accent': settings.theme.accent}} className="min-h-screen font-sans selection:bg-[var(--accent)] selection:text-white">
                     <nav className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all shadow-sm"><div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center"><div className="font-serif font-bold text-xl tracking-normal text-[var(--primary)]">Dnyanjyoti<span className="text-[var(--accent)]">.</span></div><div className="flex items-center gap-6"><button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="hidden md:block px-6 py-2 bg-[var(--primary)] text-white text-base font-semibold tracking-normal uppercase hover:bg-slate-800 transition-colors rounded">{t.secureSpot}</button></div></div></nav>
                     
-                    <header className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden bg-gradient-to-br from-[var(--warm)] via-white to-white"><div className="absolute inset-0 bg-pattern-dots opacity-30 pointer-events-none"></div><div className="max-w-7xl mx-auto flex flex-col items-center text-center"><div className="animate-fade-up relative z-10 max-w-4xl">
-                        <p className="text-[var(--primary)] font-bold tracking-normal uppercase text-sm mb-4">{t.heroSubtitle}</p>
-                        
-                        <h1 className="text-5xl md:text-7xl font-serif font-bold text-[var(--primary)] leading-[1.3] mb-6">
-                            {t.heroTitle1} <br/> 
-                            <span className="text-red-600 italic">{t.heroTitle2}</span>
-                        </h1>
-                        
-                        <ul className="inline-block text-left mb-10 space-y-2 border-l-4 border-[var(--accent)] pl-6 py-2">
-                            {t.heroExams.map((exam, i) => (
-                                <li key={i} className="text-[var(--text-body)] text-lg md:text-xl font-medium flex items-center gap-2 tracking-normal">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></div>
-                                    {exam}
-                                </li>
-                            ))}
-                        </ul>
-
-                        <div className="flex flex-col items-center gap-6">
-                            <button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="px-10 py-5 bg-[var(--accent)] text-white text-xl tracking-normal uppercase font-bold hover:brightness-110 transition-all rounded shadow-lg shadow-orange-100 hover:shadow-xl transform hover:-translate-y-0.5">{t.secureSpot}</button>
-                            
-                            <span className="inline-block py-2 px-6 border border-[var(--accent)] rounded-full text-xs md:text-sm tracking-normal font-bold text-[var(--accent)] uppercase bg-white/80 backdrop-blur shadow-sm animate-pulse-glow">
-                                {t.heroFeature}
-                            </span>
+                    <header className="relative pt-32 pb-16 md:pt-44 md:pb-24 px-6 overflow-hidden bg-gradient-to-br from-[var(--warm)] via-white to-white">
+                        <div className="absolute inset-0 bg-pattern-dots opacity-30 pointer-events-none"></div>
+                        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+                            <div className="animate-fade-up order-1 md:order-1 relative z-10">
+                                <h1 className="text-4xl md:text-6xl font-sans font-black text-[var(--primary)] leading-normal mb-4 tracking-normal">
+                                    {t.heroTitle1} <br/>
+                                    <span className="text-red-600 italic">{t.heroTitle2}</span>
+                                </h1>
+                                <p className="text-[var(--primary)] font-semibold tracking-normal uppercase text-sm mb-6 flex items-center gap-2">
+                                    <CheckCircle size={16} className="text-[var(--accent)]" />
+                                    {t.heroSubtitle}
+                                </p>
+                                <ul className="text-[var(--text-body)] text-lg md:text-xl font-normal leading-relaxed mb-8 max-w-lg border-l-2 border-[var(--accent)] pl-6 space-y-2">
+                                    {t.heroDesc.map((item, i) => (
+                                        <li key={i} className="flex items-center gap-2 tracking-normal">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <div className="flex flex-col gap-4">
+                                    <button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="px-8 py-4 bg-[var(--accent)] text-white text-lg tracking-normal uppercase font-bold hover:brightness-110 transition-all rounded shadow-lg shadow-orange-100 hover:shadow-xl transform hover:-translate-y-0.5 w-fit">{t.secureSpot}</button>
+                                    <div className="glow-badge py-3 px-5 rounded-full text-white text-sm md:text-base font-bold tracking-normal w-fit">
+                                        {t.heroFeature}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="relative order-2 md:order-2 animate-fade-in hidden md:block">
+                                <div className="absolute inset-0 bg-[var(--accent)] rounded-full opacity-5 blur-3xl transform translate-x-10 translate-y-10"></div>
+                            </div>
                         </div>
-                    </div></div></header>
+                    </header>
 
-                    <div className="border-y border-slate-100 bg-white relative z-20"><div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">{[{ val: "12+", label: t.stat1 }, { val: "1000+", label: t.stat2 }, { val: "350+", label: t.stat3 }, { val: "4", label: t.stat4 }].map((s,i) => (<div key={i}><h4 className="text-4xl md:text-5xl font-serif text-[var(--primary)] mb-2 tracking-normal">{s.val}</h4><p className="text-xs md:text-sm font-bold tracking-normal text-[var(--text-body)] uppercase">{s.label}</p></div>))}</div></div>
-                    
-                    <section className="py-24 px-6 bg-[var(--primary)] relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none"><div className="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] bg-white rounded-full blur-[120px]"></div></div>
+                    <div className="border-y border-slate-100 bg-white relative z-20"><div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">{[{ val: "12+", label: t.stat1 }, { val: "1000+", label: t.stat2 }, { val: "350+", label: t.stat3 }, { val: "4", label: t.stat4 }].map((s,i) => (<div key={i}><h4 className="text-3xl md:text-4xl font-serif text-[var(--primary)] mb-1 tracking-normal">{s.val}</h4><p className="text-xs md:text-sm font-bold tracking-normal text-[var(--text-body)] uppercase">{s.label}</p></div>))}</div></div>
+
+                    <section className="py-20 px-6 bg-[var(--primary)] relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none"><div className="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] bg-white rounded-full blur-[120px]"></div></div>
                         <div className="max-w-5xl mx-auto relative z-10">
                             <SectionHeader title={t.whyTitle} subtitle={t.whySubtitle} light={true} />
-                            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-5 md:p-10 border border-white/10 shadow-2xl">
+                            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 md:p-10 border border-white/10 shadow-2xl">
                                 <div className="space-y-4">
                                     {t.whyList.map((item, i) => (
-                                        <div key={i} className="flex flex-col md:flex-row items-center md:items-start gap-4 p-4 hover:bg-white/5 rounded-lg transition-all duration-300 border border-transparent hover:border-white/5 text-center md:text-left">
-                                            <div className="shrink-0 w-12 h-12 rounded-full bg-[var(--accent)] text-white flex items-center justify-center shadow-lg font-bold mb-2 md:mb-0">
-                                                {item.icon}
-                                            </div>
-                                            <p className="text-slate-200 text-xl pt-1 leading-relaxed tracking-normal">{item.text}</p>
+                                        <div key={i} className="flex flex-col md:flex-row md:items-start gap-3 p-4 hover:bg-white/5 rounded-lg transition-all duration-300 border border-transparent hover:border-white/5">
+                                            <div className="shrink-0 w-10 h-10 rounded-full bg-[var(--accent)] text-white flex items-center justify-center shadow-lg font-bold">{item.icon}</div>
+                                            <p className="text-slate-200 text-base md:text-lg leading-relaxed tracking-normal">{item.text}</p>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         </div>
                     </section>
-                    
-                    {/* New Profile Section (Shifted Here) */}
-                    <section className="py-24 px-6 bg-[var(--warm)] relative">
-                        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center">
-                            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl border-4 border-white order-1 md:order-1">
-                                <img src="https://res.cloudinary.com/dkkkjtoa9/image/upload/v1765787346/image6555_mh6v2z.png" className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-1000" alt={t.mentorName} />
-                                <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[var(--primary)] to-transparent text-white">
-                                    <p className="font-serif text-xl italic opacity-90">"{t.mentorQuote}"</p>
+
+                    {/* Mentor Section - Now below Why Attend */}
+                    <section className="py-16 px-6 bg-gradient-to-br from-slate-50 to-white">
+                        <div className="max-w-5xl mx-auto">
+                            <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                                <div className="grid md:grid-cols-2 gap-0">
+                                    <div className="relative aspect-[4/5] md:aspect-auto">
+                                        <img src="https://res.cloudinary.com/dkkkjtoa9/image/upload/v1765787346/image6555_mh6v2z.png" className="w-full h-full object-cover object-top" alt="Dr Vishal Bhedurkar" />
+                                        <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-[var(--primary)] to-transparent">
+                                            <p className="font-sans text-lg italic text-white opacity-90 tracking-normal">"{t.mentorQuote}"</p>
+                                        </div>
+                                    </div>
+                                    <div className="p-6 md:p-8 flex flex-col justify-center">
+                                        <div className="flex items-center gap-2 text-[var(--accent)] mb-3">
+                                            <Award size={20} />
+                                            <span className="text-xs font-bold uppercase tracking-normal">तुमचे मार्गदर्शक</span>
+                                        </div>
+                                        <h3 className="text-2xl md:text-3xl font-sans font-bold text-[var(--primary)] mb-2 tracking-normal">{t.mentorName}</h3>
+                                        <div className="flex items-center gap-2 text-slate-600 mb-4">
+                                            <Briefcase size={16} />
+                                            <span className="text-sm tracking-normal">{t.mentorRole}</span>
+                                        </div>
+                                        <p className="text-slate-500 text-sm mb-4 tracking-normal">{t.mentorOrg}</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            <span className="px-3 py-1 bg-[var(--warm)] text-[var(--accent)] rounded-full text-xs font-medium tracking-normal">12+ वर्षांचा अनुभव</span>
+                                            <span className="px-3 py-1 bg-[var(--warm)] text-[var(--accent)] rounded-full text-xs font-medium tracking-normal">350+ निवड</span>
+                                            <span className="px-3 py-1 bg-[var(--warm)] text-[var(--accent)] rounded-full text-xs font-medium tracking-normal">MPSC तज्ञ</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="order-2 md:order-2">
-                                <span className="text-[var(--accent)] font-bold tracking-normal uppercase text-sm mb-2 block">{t.mentorTitle}</span>
-                                <h2 className="text-4xl md:text-5xl font-serif font-bold text-[var(--primary)] mb-4 tracking-normal">{t.mentorName}</h2>
-                                <p className="text-xl text-slate-600 font-medium mb-6 tracking-normal">{t.mentorRole}</p>
-                                <div className="h-1 w-20 bg-[var(--accent)] mb-6"></div>
-                                <p className="text-[var(--text-body)] leading-relaxed text-lg tracking-normal">
-                                    टॉप रँकर्सना मार्गदर्शन करण्याचा वर्षांचा अनुभव आणि प्रशासकीय कौशल्य डॉ. विशाल तुमच्या यशासाठी वापरतील.
-                                </p>
                             </div>
                         </div>
                     </section>
 
-                    <section className="py-24 px-6 bg-[var(--surface)]"><div className="max-w-7xl mx-auto"><SectionHeader title={t.agendaTitle} subtitle={t.agendaSubtitle} /><div className="grid md:grid-cols-3 gap-6">{t.agendaList.map((item, i) => (<div key={i} className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-[var(--accent)] transition-all duration-300 group"><div className="w-12 h-12 rounded-lg bg-[var(--warm)] text-[var(--accent)] flex items-center justify-center mb-6 group-hover:bg-[var(--accent)] group-hover:text-white transition-colors shadow-inner">{item.icon}</div><h3 className="text-xl font-bold text-[var(--primary)] mb-3 tracking-normal">{item.title}</h3><p className="text-base text-[var(--text-body)] leading-relaxed tracking-normal">{item.desc}</p></div>))}</div></div></section>
-                    
-                    <section id="register" className="py-24 px-6 bg-[var(--primary)] text-white relative overflow-hidden"><div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--accent)_0%,_transparent_70%)] opacity-20 pointer-events-none"></div><div className="absolute top-0 right-0 w-1/2 h-full bg-white/5 skew-x-12 transform translate-x-20"></div><div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center relative z-10"><div><h2 className="text-5xl md:text-6xl font-serif mb-6 leading-tight tracking-normal text-[var(--accent)]">{t.formTitle}</h2><p className="text-slate-300 font-light text-xl mb-8 tracking-normal">{t.formSubtitle}</p><ul className="space-y-4 mb-10">{["मोफत लाइव्ह इंटरएक्टिव्ह सत्र", "विशेष PDF अभ्यास साहित्य", "प्राधान्य समुपदेशन स्लॉट (Counselling)"].map((item, i) => (<li key={i} className="flex items-center gap-3 text-base text-slate-200 font-medium tracking-normal"><div className="w-2 h-2 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]"></div>{item}</li>))}</ul></div><div className="bg-white text-[var(--text-body)] p-6 md:p-10 rounded-2xl shadow-2xl relative"><div className="absolute -top-4 -right-4 bg-[var(--accent)] text-white text-sm font-bold py-1 px-3 rounded shadow-lg uppercase tracking-normal">मोफत प्रवेश</div>
-                    <form onSubmit={handleRegister} className="space-y-6">
-                        <div><label className="text-sm font-bold text-slate-400 uppercase tracking-normal mb-2 block">{t.name}</label><input required name="name" type="text" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचे पूर्ण नाव" /></div>
-                        <div><label className="text-sm font-bold text-slate-400 uppercase tracking-normal mb-2 block">{t.email}</label><input required name="email" type="email" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचा ईमेल पत्ता" /></div>
-                        <div><label className="text-sm font-bold text-slate-400 uppercase tracking-normal mb-2 block">{t.phone}</label><input required name="phone" type="tel" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचा फोन नंबर" /></div>
-                        <div className="text-center">
-                            <button type="submit" className="w-full py-4 bg-[var(--accent)] text-white font-bold text-xl tracking-normal uppercase hover:brightness-110 transition-all rounded mt-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1">{t.formButton}</button>
-                            <p className="text-sm font-medium text-[var(--accent)] mt-3 animate-pulse tracking-normal">{t.freeMaterial}</p>
+                    <section className="py-20 px-6 bg-[var(--surface)]">
+                        <div className="max-w-7xl mx-auto">
+                            <SectionHeader title={t.agendaTitle} subtitle={t.agendaSubtitle} />
+                            <div className="grid md:grid-cols-3 gap-4">
+                                {t.agendaList.map((item, i) => (
+                                    <div key={i} className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 hover:shadow-xl hover:border-[var(--accent)] transition-all duration-300 group">
+                                        <div className="w-10 h-10 rounded-lg bg-[var(--warm)] text-[var(--accent)] flex items-center justify-center mb-4 group-hover:bg-[var(--accent)] group-hover:text-white transition-colors shadow-inner">{item.icon}</div>
+                                        <h3 className="text-base font-bold text-[var(--primary)] mb-2 tracking-normal">{item.title}</h3>
+                                        <p className="text-sm text-[var(--text-body)] leading-relaxed tracking-normal">{item.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                        <p className="text-center text-sm text-slate-400 mt-4 tracking-normal">मर्यादित जागा उपलब्ध. प्रथम येणाऱ्यास प्राधान्य.</p>
-                    </form></div></div></section>
-                    <footer className="bg-[var(--primary)] text-slate-400 py-12 px-6 border-t border-white/10 text-center md:text-left"><div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6"><div className="font-serif text-white text-lg">Dnyanjyoti Education</div><div className="text-sm tracking-normal uppercase flex gap-6"><a href="#" className="hover:text-[var(--accent)] transition-colors">गोपनीयता</a><a href="#" className="hover:text-[var(--accent)] transition-colors">अटी</a><a href="#" className="hover:text-[var(--accent)] transition-colors">संपर्क</a></div><div className="flex gap-4"><a href={settings.socialLinks.instagram} className="hover:text-white transition-colors"><Instagram size={18}/></a><a href={settings.socialLinks.facebook} className="hover:text-white transition-colors"><Facebook size={18}/></a></div></div></footer>
+                    </section>
+
+                    <section id="register" className="py-20 px-6 bg-[var(--primary)] text-white relative overflow-hidden">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--accent)_0%,_transparent_70%)] opacity-20 pointer-events-none"></div>
+                        <div className="absolute top-0 right-0 w-1/2 h-full bg-white/5 skew-x-12 transform translate-x-20"></div>
+                        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+                            <div>
+                                <h2 className="text-4xl md:text-5xl font-sans mb-4 leading-tight tracking-normal text-[var(--accent)]">{t.formTitle}</h2>
+                                <p className="text-slate-300 font-light text-lg mb-6 tracking-normal">{t.formSubtitle}</p>
+                                <ul className="space-y-3 mb-8">
+                                    {["मोफत लाइव्ह इंटरएक्टिव्ह सत्र", "विशेष PDF अभ्यास साहित्य", "प्राधान्य समुपदेशन स्लॉट"].map((item, i) => (
+                                        <li key={i} className="flex items-center gap-3 text-sm text-slate-200 font-medium tracking-normal">
+                                            <div className="w-2 h-2 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]"></div>{item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className="bg-white text-[var(--text-body)] p-6 md:p-8 rounded-2xl shadow-2xl relative">
+                                <div className="absolute -top-4 -right-4 bg-[var(--accent)] text-white text-sm font-bold py-1 px-3 rounded shadow-lg uppercase tracking-normal">मोफत प्रवेश</div>
+                                <form onSubmit={handleRegister} className="space-y-5">
+                                    <div>
+                                        <label className="text-sm font-bold text-slate-400 uppercase tracking-normal mb-1 block">{t.name}</label>
+                                        <input required name="name" type="text" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचे पूर्ण नाव" />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-slate-400 uppercase tracking-normal mb-1 block">{t.email}</label>
+                                        <input required name="email" type="email" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचा ईमेल पत्ता" />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-slate-400 uppercase tracking-normal mb-1 block">{t.phone}</label>
+                                        <input required name="phone" type="tel" className="w-full bg-slate-50 border-b-2 border-slate-100 p-3 outline-none focus:border-[var(--accent)] focus:bg-white transition-colors font-medium text-[var(--primary)]" placeholder="तुमचा फोन नंबर" />
+                                    </div>
+                                    <button type="submit" className="w-full py-4 bg-[var(--accent)] text-white font-bold text-lg tracking-normal uppercase hover:brightness-110 transition-all rounded mt-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">{t.formButton}</button>
+                                    <p className="text-center text-sm text-[var(--accent)] font-semibold mt-2 tracking-normal">🎁 {t.freeStudyMaterial}</p>
+                                    <p className="text-center text-xs text-slate-400 mt-1 tracking-normal">मर्यादित जागा उपलब्ध. प्रथम येणाऱ्यास प्राधान्य.</p>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <footer className="bg-[var(--primary)] text-slate-400 py-10 px-6 border-t border-white/10 text-center md:text-left">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div className="font-serif text-white text-lg">Dnyanjyoti Education</div>
+                            <div className="text-sm tracking-normal uppercase flex gap-6">
+                                <a href="#" className="hover:text-[var(--accent)] transition-colors">गोपनीयता</a>
+                                <a href="#" className="hover:text-[var(--accent)] transition-colors">अटी</a>
+                                <a href="#" className="hover:text-[var(--accent)] transition-colors">संपर्क</a>
+                            </div>
+                            <div className="flex gap-4">
+                                <a href={settings.socialLinks.instagram} className="hover:text-white transition-colors"><Instagram size={18}/></a>
+                                <a href={settings.socialLinks.facebook} className="hover:text-white transition-colors"><Facebook size={18}/></a>
+                            </div>
+                        </div>
+                    </footer>
+
                     {isAdmin && <AdminPanel />}
-                    {!isAdmin && showLogin && ( <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4"><div className="bg-white p-6 rounded max-w-sm w-full"><h3 className="text-lg font-bold mb-4 text-[var(--primary)] tracking-normal">{!settings.adminPasskey ? "Set Admin Passkey" : "Admin Access"}</h3><p className="text-xs text-slate-500 mb-4">{!settings.adminPasskey ? "This is a one-time setup. The passkey you set now will be required for all future logins." : "Enter your passkey to manage student data."}</p><input type="password" value={passkeyInput} onChange={e => setPasskeyInput(e.target.value)} className="w-full border p-2 mb-4 rounded" placeholder={!settings.adminPasskey ? "Create new passkey" : "Enter Key"} /><div className="flex justify-end gap-2"><button onClick={() => setShowLogin(false)} className="px-4 py-2 text-slate-500">Cancel</button><button onClick={handleAdminAction} className="px-4 py-2 bg-[var(--primary)] text-white rounded">{!settings.adminPasskey ? "Save & Login" : "Unlock"}</button></div></div></div> )}
-                    {!isAdmin && !showLogin && ( <button onClick={() => setShowLogin(true)} className="fixed bottom-6 right-6 p-3 bg-white/10 backdrop-blur border border-white/20 rounded-full text-slate-300 hover:text-[var(--accent)] transition-colors z-40"><Lock size={16} /></button> )}
+                    {!isAdmin && showLogin && (
+                        <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4">
+                            <div className="bg-white p-6 rounded max-w-sm w-full">
+                                <h3 className="text-lg font-bold mb-4 text-[var(--primary)] tracking-normal">{!settings.adminPasskey ? "Set Admin Passkey" : "Admin Access"}</h3>
+                                <p className="text-xs text-slate-500 mb-4">{!settings.adminPasskey ? "This is a one-time setup. The passkey you set now will be required for all future logins." : "Enter your passkey to manage student data."}</p>
+                                <input type="password" value={passkeyInput} onChange={e => setPasskeyInput(e.target.value)} className="w-full border p-2 mb-4 rounded" placeholder={!settings.adminPasskey ? "Create new passkey" : "Enter Key"} />
+                                <div className="flex justify-end gap-2">
+                                    <button onClick={() => setShowLogin(false)} className="px-4 py-2 text-slate-500">Cancel</button>
+                                    <button onClick={handleAdminAction} className="px-4 py-2 bg-[var(--primary)] text-white rounded">{!settings.adminPasskey ? "Save & Login" : "Unlock"}</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {!isAdmin && !showLogin && (
+                        <button onClick={() => setShowLogin(true)} className="fixed bottom-6 right-6 p-3 bg-white/10 backdrop-blur border border-white/20 rounded-full text-slate-300 hover:text-[var(--accent)] transition-colors z-40"><Lock size={16} /></button>
+                    )}
                 </div>
             );
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        async function initApp() {
+            try {
+                const configPromise = import('./firebase-config.js');
+                const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve('timeout'), 3000));
+                const result = await Promise.race([configPromise, timeoutPromise]);
+                if (result === 'timeout' || !result.db) { console.warn("Offline Mode"); createRoot(document.getElementById('root')).render(<App isOffline={true} />); }
+                else { db = result.db; auth = result.auth; const fs = await import('firebase/firestore'); firestoreFuncs = { ...fs }; createRoot(document.getElementById('root')).render(<App isOffline={false} />); }
+            } catch (e) { console.error("Init Error", e); createRoot(document.getElementById('root')).render(<App isOffline={true} />); }
+        }
+
+        initApp();
     </script>
 </body>
 </html>
