@@ -104,7 +104,7 @@
                 { icon: <Star size={20}/>, text: "पदवीच्या शेवटच्या वर्षाला असणाऱ्या विद्यार्थ्यांसाठी ही सुवर्णसंधी आहे." }
             ],
             mentorName: "Dr. Vishal Bhedurkar",
-            mentorRole: "माजी वित्त आणि लेखा अधिकारी",
+            mentorRole: "वित्त आणि लेखा अधिकारी",
             mentorOrg: "महाराष्ट्र राज्य शासन",
             mentorQuote: "यश म्हणजे जास्त वाचणे नव्हे, तर स्पष्टपणे विचार करणे.",
             agendaTitle: "या वर्कशॉपमध्ये काय मिळेल?",
@@ -169,7 +169,6 @@
             const [leads, setLeads] = useState([]);
             const [testimonials, setTestimonials] = useState([]);
             const [showTestimonialForm, setShowTestimonialForm] = useState(false);
-            const [newTestimonial, setNewTestimonial] = useState({ name: '', role: '', text: '', imageUrl: '' });
 
             const getLeadsCollection = () => firestoreFuncs.collection(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION);
             const getSettingsDoc = () => firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', 'config', SETTINGS_DOC_ID);
@@ -225,23 +224,6 @@
                 setTimeout(() => { window.scrollTo(0,0); setCurrentPage('thankyou'); }, 800);
             };
 
-            const handleAddTestimonial = async () => {
-                if (!newTestimonial.name.trim() || !newTestimonial.text.trim()) {
-                    alert("Name and testimonial text are required");
-                    return;
-                }
-                try {
-                    await firestoreFuncs.addDoc(getTestimonialsCollection(), {
-                        ...newTestimonial,
-                        createdAt: new Date().toISOString()
-                    });
-                    setNewTestimonial({ name: '', role: '', text: '', imageUrl: '' });
-                    setShowTestimonialForm(false);
-                } catch (e) {
-                    alert("Failed to add testimonial: " + e.message);
-                }
-            };
-
             const handleDeleteTestimonial = async (id) => {
                 if (confirm("Delete this testimonial?")) {
                     try {
@@ -250,6 +232,29 @@
                         alert("Failed to delete: " + e.message);
                     }
                 }
+            };
+
+            const TestimonialForm = ({ onSave, onCancel }) => {
+                const [formData, setFormData] = useState({ name: '', role: '', text: '', imageUrl: '' });
+                const handleSubmit = () => {
+                    if (!formData.name.trim() || !formData.text.trim()) {
+                        alert("Name and testimonial text are required");
+                        return;
+                    }
+                    onSave(formData);
+                };
+                return (
+                    <div className="bg-slate-50 p-4 rounded border mb-4 space-y-3">
+                        <input type="text" placeholder="Name *" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full p-2 border rounded text-sm" />
+                        <input type="text" placeholder="Role (optional)" value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})} className="w-full p-2 border rounded text-sm" />
+                        <input type="url" placeholder="Image URL (optional)" value={formData.imageUrl} onChange={(e) => setFormData({...formData, imageUrl: e.target.value})} className="w-full p-2 border rounded text-sm" />
+                        <textarea placeholder="Testimonial text *" value={formData.text} onChange={(e) => setFormData({...formData, text: e.target.value})} className="w-full p-2 border rounded text-sm" rows={3}></textarea>
+                        <div className="flex gap-2">
+                            <button onClick={handleSubmit} className="flex-1 bg-[var(--primary)] text-white py-2 rounded text-sm">Save</button>
+                            <button onClick={onCancel} className="px-4 py-2 text-slate-500 text-sm">Cancel</button>
+                        </div>
+                    </div>
+                );
             };
 
             const AdminPanel = () => (
@@ -286,16 +291,20 @@
                                     <button onClick={() => setShowTestimonialForm(true)} className="text-xs bg-[var(--accent)] text-white px-2 py-1 rounded hover:brightness-110 flex items-center gap-1"><Plus size={12}/> Add</button>
                                 </div>
                                 {showTestimonialForm && (
-                                    <div className="bg-slate-50 p-4 rounded border mb-4 space-y-3">
-                                        <input type="text" placeholder="Name *" value={newTestimonial.name} onChange={(e) => setNewTestimonial({...newTestimonial, name: e.target.value})} className="w-full p-2 border rounded text-sm" />
-                                        <input type="text" placeholder="Role (optional)" value={newTestimonial.role} onChange={(e) => setNewTestimonial({...newTestimonial, role: e.target.value})} className="w-full p-2 border rounded text-sm" />
-                                        <input type="url" placeholder="Image URL (optional)" value={newTestimonial.imageUrl} onChange={(e) => setNewTestimonial({...newTestimonial, imageUrl: e.target.value})} className="w-full p-2 border rounded text-sm" />
-                                        <textarea placeholder="Testimonial text *" value={newTestimonial.text} onChange={(e) => setNewTestimonial({...newTestimonial, text: e.target.value})} className="w-full p-2 border rounded text-sm" rows={3}></textarea>
-                                        <div className="flex gap-2">
-                                            <button onClick={handleAddTestimonial} className="flex-1 bg-[var(--primary)] text-white py-2 rounded text-sm">Save</button>
-                                            <button onClick={() => setShowTestimonialForm(false)} className="px-4 py-2 text-slate-500 text-sm">Cancel</button>
-                                        </div>
-                                    </div>
+                                    <TestimonialForm 
+                                        onSave={async (formData) => {
+                                            try {
+                                                await firestoreFuncs.addDoc(getTestimonialsCollection(), {
+                                                    ...formData,
+                                                    createdAt: new Date().toISOString()
+                                                });
+                                                setShowTestimonialForm(false);
+                                            } catch (e) {
+                                                alert("Failed to add testimonial: " + e.message);
+                                            }
+                                        }}
+                                        onCancel={() => setShowTestimonialForm(false)}
+                                    />
                                 )}
                                 <div className="bg-slate-50 rounded border border-slate-100 max-h-60 overflow-y-auto">
                                     {testimonials.length===0 ? <p className="p-4 text-xs text-slate-400 text-center tracking-normal">No testimonials yet.</p> : testimonials.map(t => (
