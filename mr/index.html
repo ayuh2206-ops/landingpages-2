@@ -29,33 +29,31 @@
                 }
             }
         }
+<!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+ fbq('init', '989461295169119'); 
+fbq('track', 'PageView');
+</script>
+<noscript>
+ <img height="1" width="1" 
+src="https://www.facebook.com/tr?id=989461295169119&ev=PageView
+&noscript=1"/>
+</noscript>
+<!-- End Facebook Pixel Code -->
     </script>
     <script type="importmap">
     { "imports": { "react": "https://esm.sh/react@18.2.0", "react-dom/client": "https://esm.sh/react-dom@18.2.0/client", "lucide-react": "https://esm.sh/lucide-react@0.300.0", "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js", "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js", "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js" } }
     </script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <title>Dnyanjyoti Education | 120+ Marks Strategy Workshop (Marathi)</title>
-
-    <!-- Facebook Pixel Code -->
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window,document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '989461295169119'); 
-    fbq('track', 'PageView');
-    </script>
-    <noscript>
-    <img height="1" width="1" 
-    src="https://www.facebook.com/tr?id=989461295169119&ev=PageView
-    &noscript=1"/>
-    </noscript>
-    <!-- End Facebook Pixel Code -->
-
     <style>
         body { font-family: 'Noto Sans Devanagari', 'Inter', sans-serif; background-color: #FFFFFF; color: #4A4A4A; }
         h1, h2, h3, h4 { font-family: 'Noto Sans Devanagari', 'Playfair Display', serif; color: #233D4D; }
@@ -94,19 +92,10 @@
         import React, { useState, useEffect, useRef } from 'react';
         import { createRoot } from 'react-dom/client';
         import { CheckCircle, Play, Pause, MessageCircle, Send, ChevronRight, Download, ShieldCheck, Settings, Lock, Unlock, Video, X, Star, Zap, Target, Book, Brain, Scale, FileText, Eye, RotateCcw, Instagram, Facebook, Users, ArrowLeft, Trash2, Edit2, Home, MapPin, Calendar, HelpCircle, TrendingUp, Plus, Image, Quote, Award, Briefcase } from 'lucide-react';
-        import { initializeApp } from 'firebase/app';
-        import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
-        import { getFirestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, setDoc } from 'firebase/firestore';
 
-        // --- FIREBASE SETUP ---
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        let db = null; let auth = null; let firestoreFuncs = {};
         
-        // Use environment variable for App ID if available, otherwise default
-        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'dnyanjyoti_v2';
-        
+        const APP_ID = 'dnyanjyoti_v2';
         const SETTINGS_DOC_ID = 'settings_global';
         const LEADS_COLLECTION = 'leads_marathi';
         const TESTIMONIALS_COLLECTION = 'testimonials';
@@ -190,7 +179,7 @@
             </div>
         );
 
-        const App = () => {
+        const App = ({ isOffline }) => {
             const [currentPage, setCurrentPage] = useState('landing');
             const [settings, setSettings] = useState(DEFAULT_SETTINGS);
             const [isAdmin, setIsAdmin] = useState(false);
@@ -199,69 +188,45 @@
             const [leads, setLeads] = useState([]);
             const [testimonials, setTestimonials] = useState([]);
             const [showTestimonialForm, setShowTestimonialForm] = useState(false);
-            const [user, setUser] = useState(null);
 
-            // Auth Effect
+            const getLeadsCollection = () => firestoreFuncs.collection(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION);
+            const getSettingsDoc = () => firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', 'config', SETTINGS_DOC_ID);
+            const getTestimonialsCollection = () => firestoreFuncs.collection(db, 'artifacts', APP_ID, 'public', 'data', TESTIMONIALS_COLLECTION);
+
             useEffect(() => {
-                const initAuth = async () => {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
+                if (isOffline || !db) return;
+                const doAuth = async () => {
+                    try {
+                        const { signInAnonymously } = await import('firebase/auth');
                         await signInAnonymously(auth);
-                    }
+                        const unsubSettings = firestoreFuncs.onSnapshot(getSettingsDoc(), (doc) => {
+                            if (doc.exists()) setSettings(prev => ({ ...prev, ...doc.data() }));
+                        });
+                        const unsubTestimonials = firestoreFuncs.onSnapshot(getTestimonialsCollection(), (snapshot) => {
+                            const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                            setTestimonials(items);
+                        });
+                        return () => { unsubSettings(); unsubTestimonials(); };
+                    } catch (err) { console.error("Auth Failed", err); }
                 };
-                initAuth();
-                const unsubscribe = onAuthStateChanged(auth, setUser);
-                return () => unsubscribe();
-            }, []);
-
-            // Data Effects
-            useEffect(() => {
-                if (!user) return;
-
-                // Settings Listener (Public)
-                const settingsRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'config', SETTINGS_DOC_ID);
-                const unsubSettings = onSnapshot(settingsRef, (docSnap) => {
-                    if (docSnap.exists()) setSettings(prev => ({ ...prev, ...docSnap.data() }));
-                }, (err) => console.error("Settings error:", err));
-
-                // Testimonials Listener (Public)
-                const testimonialsRef = collection(db, 'artifacts', APP_ID, 'public', 'data', TESTIMONIALS_COLLECTION);
-                const unsubTestimonials = onSnapshot(testimonialsRef, (snapshot) => {
-                    const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    setTestimonials(items);
-                }, (err) => console.error("Testimonials error:", err));
-
-                return () => { unsubSettings(); unsubTestimonials(); };
-            }, [user]);
+                doAuth();
+            }, [isOffline]);
 
             const fetchLeads = async () => {
-                if (!user) return;
+                if (!db) return;
                 try {
-                    const leadsRef = collection(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION);
-                    const q = query(leadsRef, orderBy("registeredAt", "desc"));
-                    const snap = await getDocs(q);
+                    const q = firestoreFuncs.query(getLeadsCollection(), firestoreFuncs.orderBy("registeredAt", "desc"));
+                    const snap = await firestoreFuncs.getDocs(q);
                     setLeads(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-                } catch (e) { 
-                    console.error("Leads error", e); 
-                    // Fallback if index missing
-                    try {
-                        const leadsRef = collection(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION);
-                        const snap = await getDocs(leadsRef);
-                        const sorted = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => new Date(b.registeredAt) - new Date(a.registeredAt));
-                        setLeads(sorted);
-                    } catch(innerE) {
-                        console.error("Fallback leads error", innerE);
-                    }
-                }
+                } catch (e) { console.error("Leads error", e); alert("Please create Firestore Index for proper sorting."); }
             };
 
             const handleAdminAction = async () => {
+                if(isOffline) { alert("Offline Mode"); return; }
                 if (!settings.adminPasskey) {
                     if (!passkeyInput.trim()) return alert("Enter a valid passkey");
                     try {
-                        const settingsRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'config', SETTINGS_DOC_ID);
-                        await setDoc(settingsRef, { adminPasskey: passkeyInput.trim() }, { merge: true });
+                        await firestoreFuncs.setDoc(getSettingsDoc(), { adminPasskey: passkeyInput.trim() }, { merge: true });
                         setIsAdmin(true); setShowLogin(false); fetchLeads();
                     } catch(e) { alert("Setup failed: " + e.message); }
                 } else {
@@ -272,23 +237,16 @@
 
             const handleRegister = async (e) => {
                 e.preventDefault();
-                if (!user) return;
                 const formData = new FormData(e.target);
                 const data = { name: formData.get('name'), email: formData.get('email'), phone: formData.get('phone'), registeredAt: new Date().toISOString(), source: 'web_v2_premium_mr' };
-                
-                try {
-                    await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION), data);
-                    setTimeout(() => { window.scrollTo(0,0); setCurrentPage('thankyou'); }, 800);
-                } catch(e) {
-                    console.error("Registration error", e);
-                    alert("Registration failed. Please try again.");
-                }
+                if (db && !isOffline) { await firestoreFuncs.addDoc(getLeadsCollection(), data); }
+                setTimeout(() => { window.scrollTo(0,0); setCurrentPage('thankyou'); }, 800);
             };
 
             const handleDeleteTestimonial = async (id) => {
                 if (confirm("Delete this testimonial?")) {
                     try {
-                        await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', TESTIMONIALS_COLLECTION, id));
+                        await firestoreFuncs.deleteDoc(firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', TESTIMONIALS_COLLECTION, id));
                     } catch (e) {
                         alert("Failed to delete: " + e.message);
                     }
@@ -298,7 +256,7 @@
             const handleDeleteLead = async (id) => {
                 if (confirm("Delete this lead?")) {
                     try {
-                        await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION, id));
+                        await firestoreFuncs.deleteDoc(firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION, id));
                         fetchLeads();
                     } catch (e) {
                         alert("Failed to delete: " + e.message);
@@ -312,7 +270,7 @@
                 
                 const handleSave = async () => {
                     try {
-                        await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION, lead.id), editData);
+                        await firestoreFuncs.updateDoc(firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION, lead.id), editData);
                         setIsEditing(false);
                         onUpdate();
                     } catch (e) {
@@ -388,14 +346,8 @@
                             <div>
                                 <h3 className="text-xs font-bold uppercase text-slate-400 mb-3 tracking-normal">Visual Identity (Shared)</h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div><label className="text-xs text-slate-500 mb-1 block tracking-normal">Primary</label><input type="color" value={settings.theme.primary} onChange={(e) => {
-                                        const settingsRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'config', SETTINGS_DOC_ID);
-                                        setDoc(settingsRef, {theme: {...settings.theme, primary: e.target.value}}, {merge:true});
-                                    }} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
-                                    <div><label className="text-xs text-slate-500 mb-1 block tracking-normal">Accent</label><input type="color" value={settings.theme.accent} onChange={(e) => {
-                                        const settingsRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'config', SETTINGS_DOC_ID);
-                                        setDoc(settingsRef, {theme: {...settings.theme, accent: e.target.value}}, {merge:true});
-                                    }} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
+                                    <div><label className="text-xs text-slate-500 mb-1 block tracking-normal">Primary</label><input type="color" value={settings.theme.primary} onChange={(e) => firestoreFuncs.setDoc(getSettingsDoc(), {theme: {...settings.theme, primary: e.target.value}}, {merge:true})} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
+                                    <div><label className="text-xs text-slate-500 mb-1 block tracking-normal">Accent</label><input type="color" value={settings.theme.accent} onChange={(e) => firestoreFuncs.setDoc(getSettingsDoc(), {theme: {...settings.theme, accent: e.target.value}}, {merge:true})} className="h-8 w-8 rounded cursor-pointer border-0" /></div>
                                 </div>
                             </div>
                             <div>
@@ -419,7 +371,7 @@
                                     <TestimonialForm 
                                         onSave={async (formData) => {
                                             try {
-                                                await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', TESTIMONIALS_COLLECTION), {
+                                                await firestoreFuncs.addDoc(getTestimonialsCollection(), {
                                                     ...formData,
                                                     createdAt: new Date().toISOString()
                                                 });
@@ -702,8 +654,17 @@
             );
         };
 
-        const root = createRoot(document.getElementById('root'));
-        root.render(<App />);
+        async function initApp() {
+            try {
+                const configPromise = import('./firebase-config.js');
+                const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve('timeout'), 3000));
+                const result = await Promise.race([configPromise, timeoutPromise]);
+                if (result === 'timeout' || !result.db) { console.warn("Offline Mode"); createRoot(document.getElementById('root')).render(<App isOffline={true} />); }
+                else { db = result.db; auth = result.auth; const fs = await import('firebase/firestore'); firestoreFuncs = { ...fs }; createRoot(document.getElementById('root')).render(<App isOffline={false} />); }
+            } catch (e) { console.error("Init Error", e); createRoot(document.getElementById('root')).render(<App isOffline={true} />); }
+        }
+
+        initApp();
     </script>
 </body>
 </html>
