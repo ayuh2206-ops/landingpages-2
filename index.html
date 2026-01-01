@@ -141,7 +141,7 @@
             formTitle: "Registration", formSubtitle: "Secure your spot for the 2026 Strategy Workshop.", formButton: "Register Now",
             thankYouTitle: "Registration Confirmed", thankYouDesc: "We have reserved your spot for the workshop.",
             name: "Full Name", email: "Email Address", phone: "Phone Number",
-            watchFirst: "Watch This First", nextSteps: "Next Steps", joinWhatsApp: "Join WhatsApp Group", joinGroup: "Join Group", followUpdates: "Follow for Updates",
+            nextSteps: "Next Steps", joinWhatsApp: "Join WhatsApp Group", joinGroup: "Join Group", followUpdates: "Follow for Updates",
             testimonialsTitle: "What Our Students Say", testimonialsSubtitle: "Success stories from our community"
         };
 
@@ -156,12 +156,6 @@
         const GlassCard = ({ children, className = "" }) => ( <div className={`glass-panel rounded-lg p-4 md:p-6 hover:shadow-lg transition-all duration-500 ${className}`}>{children}</div> );
         const SectionHeader = ({ title, subtitle, align = "center", light = false }) => ( <div className={`mb-12 ${align === 'center' ? 'text-center' : 'text-left'}`}><h2 className={`text-3xl md:text-4xl font-serif font-bold mb-3 ${light ? 'text-white' : 'text-[var(--primary)]'}`}>{title}</h2><div className={`h-1 w-16 bg-[var(--accent)] mb-3 ${align === 'center' ? 'mx-auto' : ''}`}></div>{subtitle && <p className={`font-light text-lg ${light ? 'text-slate-300' : 'text-[var(--text-body)]'}`}>{subtitle}</p>}</div> );
         
-        const CustomVideoPlayer = ({ videoSource }) => {
-            const videoRef = useRef(null); const [isPlaying, setIsPlaying] = useState(false); const [showControls, setShowControls] = useState(true);
-            const togglePlay = () => { if (videoRef.current) { isPlaying ? videoRef.current.pause() : videoRef.current.play(); setIsPlaying(!isPlaying); } };
-            return ( <div className="relative w-full aspect-video group bg-black rounded-lg overflow-hidden shadow-2xl border-4 border-white" onMouseEnter={() => setShowControls(true)} onMouseLeave={() => isPlaying && setShowControls(false)}>{!videoSource.src ? ( <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-500"><Video size={48} className="mb-4 opacity-50" /><p>No Video Configured</p></div> ) : ( <video ref={videoRef} src={videoSource.src} className="w-full h-full object-cover" onClick={togglePlay} onEnded={() => setIsPlaying(false)} playsInline /> )}{showControls && videoSource.src && ( <div className="absolute inset-0 bg-black/40 flex flex-col justify-between p-6 transition-opacity duration-300"><div className="absolute inset-0 flex items-center justify-center pointer-events-none"><button onClick={togglePlay} className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center pointer-events-auto hover:scale-110 transition-transform">{isPlaying ? <Pause className="fill-white text-white ml-1" /> : <Play className="fill-white text-white ml-1" />}</button></div><div className="mt-auto pointer-events-none"><p className="text-white font-bold text-lg drop-shadow-md">{videoSource.title}</p></div></div> )}</div> );
-        };
-
         const TestimonialCard = ({ testimonial }) => (
             <div className="bg-white rounded-xl p-5 shadow-md border border-slate-100 hover:shadow-lg transition-all">
                 <div className="flex items-start gap-3 mb-3">
@@ -411,20 +405,16 @@
                             <h1 className="text-4xl md:text-5xl font-serif text-[var(--primary)] mb-4">{t.thankYouTitle}</h1>
                             <p className="text-[var(--text-body)] text-lg max-w-md mx-auto">{t.thankYouDesc}</p>
                         </div>
-                        <div className="grid md:grid-cols-2 gap-12 items-start">
-                            <div className="space-y-8">
-                                {settings.pdfConfig.url && (
-                                    <GlassCard className="border-l-4 border-l-[var(--accent)]">
-                                        <h3 className="font-serif font-bold text-xl text-[var(--primary)] mb-2">Exclusive Material</h3>
-                                        <p className="text-[var(--text-body)] mb-6 text-sm">Download the descriptive pattern guide prepared by Dr. Vishal.</p>
-                                        <a href={settings.pdfConfig.url} target="_blank" className="flex items-center justify-center w-full py-4 bg-[var(--primary)] text-white hover:bg-slate-800 transition-colors rounded text-sm tracking-widest uppercase font-medium"><Download size={18} className="mr-2"/> Download PDF</a>
-                                    </GlassCard>
-                                )}
-                                <div>
-                                    <h3 className="font-bold text-lg text-[var(--primary)] mb-4 flex items-center gap-2"><Video size={20} className="text-[var(--accent)]"/> {t.watchFirst}</h3>
-                                    <CustomVideoPlayer videoSource={settings.videoConfig} />
-                                </div>
-                            </div>
+                        
+                        <div className="max-w-3xl mx-auto">
+                            {settings.pdfConfig.url && (
+                                <GlassCard className="border-l-4 border-l-[var(--accent)] mb-12">
+                                    <h3 className="font-serif font-bold text-xl text-[var(--primary)] mb-2">Exclusive Material</h3>
+                                    <p className="text-[var(--text-body)] mb-6 text-sm">Download the descriptive pattern guide prepared by Dr. Vishal.</p>
+                                    <a href={settings.pdfConfig.url} target="_blank" className="flex items-center justify-center w-full py-4 bg-[var(--primary)] text-white hover:bg-slate-800 transition-colors rounded text-sm tracking-widest uppercase font-medium"><Download size={18} className="mr-2"/> Download PDF</a>
+                                </GlassCard>
+                            )}
+
                             <div>
                                 <h3 className="font-bold text-lg text-[var(--primary)] mb-6">{t.nextSteps}</h3>
                                 <div className="space-y-6">
