@@ -139,7 +139,7 @@ src="https://www.facebook.com/tr?id=989461295169119&ev=PageView
             formTitle: "नोंदणी", formSubtitle: "२०२६ च्या स्ट्रॅटेजी वर्कशॉपसाठी आपली जागा निश्चित करा.", formButton: "आता नोंदणी करा",
             thankYouTitle: "नोंदणी यशस्वी झाली", thankYouDesc: "आम्ही वर्कशॉपसाठी तुमची जागा राखीव ठेवली आहे.",
             name: "पूर्ण नाव", email: "ईमेल पत्ता", phone: "फोन नंबर",
-            watchFirst: "हे आधी पहा", nextSteps: "पुढील पायऱ्या", joinWhatsApp: "WhatsApp ग्रुपमध्ये सामील व्हा", joinGroup: "ग्रुपमध्ये सामील व्हा", followUpdates: "अपडेट्ससाठी फॉलो करा",
+            nextSteps: "पुढील पायऱ्या", joinWhatsApp: "WhatsApp ग्रुपमध्ये सामील व्हा", joinGroup: "ग्रुपमध्ये सामील व्हा", followUpdates: "अपडेट्ससाठी फॉलो करा",
             testimonialsTitle: "आमचे विद्यार्थी काय म्हणतात", testimonialsSubtitle: "यशस्वी विद्यार्थ्यांचे अनुभव"
         };
 
@@ -154,12 +154,6 @@ src="https://www.facebook.com/tr?id=989461295169119&ev=PageView
         const GlassCard = ({ children, className = "" }) => ( <div className={`glass-panel rounded-lg p-4 md:p-6 hover:shadow-lg transition-all duration-500 ${className}`}>{children}</div> );
         const SectionHeader = ({ title, subtitle, align = "center", light = false }) => ( <div className={`mb-12 ${align === 'center' ? 'text-center' : 'text-left'}`}><h2 className={`text-4xl md:text-5xl font-sans font-bold mb-3 tracking-normal leading-tight ${light ? 'text-white' : 'text-[var(--primary)]'}`}>{title}</h2><div className={`h-1 w-16 bg-[var(--accent)] mb-3 ${align === 'center' ? 'mx-auto' : ''}`}></div>{subtitle && <p className={`text-xl md:text-2xl tracking-normal ${light ? 'text-slate-300' : 'text-[var(--text-body)]'}`}>{subtitle}</p>}</div> );
         
-        const CustomVideoPlayer = ({ videoSource }) => {
-            const videoRef = useRef(null); const [isPlaying, setIsPlaying] = useState(false); const [showControls, setShowControls] = useState(true);
-            const togglePlay = () => { if (videoRef.current) { isPlaying ? videoRef.current.pause() : videoRef.current.play(); setIsPlaying(!isPlaying); } };
-            return ( <div className="relative w-full aspect-video group bg-black rounded-lg overflow-hidden shadow-2xl border-4 border-white" onMouseEnter={() => setShowControls(true)} onMouseLeave={() => isPlaying && setShowControls(false)}>{!videoSource.src ? ( <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-500"><Video size={48} className="mb-4 opacity-50" /><p>No Video Configured</p></div> ) : ( <video ref={videoRef} src={videoSource.src} className="w-full h-full object-cover" onClick={togglePlay} onEnded={() => setIsPlaying(false)} playsInline /> )}{showControls && videoSource.src && ( <div className="absolute inset-0 bg-black/40 flex flex-col justify-between p-6 transition-opacity duration-300"><div className="absolute inset-0 flex items-center justify-center pointer-events-none"><button onClick={togglePlay} className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center pointer-events-auto hover:scale-110 transition-transform">{isPlaying ? <Pause className="fill-white text-white ml-1" /> : <Play className="fill-white text-white ml-1" />}</button></div><div className="mt-auto pointer-events-none"><p className="text-white font-bold text-lg drop-shadow-md tracking-normal">{videoSource.title}</p></div></div> )}</div> );
-        };
-
         const TestimonialCard = ({ testimonial }) => (
             <div className="bg-white rounded-xl p-5 shadow-md border border-slate-100 hover:shadow-lg transition-all">
                 <div className="flex items-start gap-3 mb-3">
@@ -409,20 +403,16 @@ src="https://www.facebook.com/tr?id=989461295169119&ev=PageView
                             <h1 className="text-5xl md:text-6xl font-sans text-[var(--primary)] mb-4 tracking-normal leading-tight">{t.thankYouTitle}</h1>
                             <p className="text-[var(--text-body)] text-xl max-w-md mx-auto tracking-normal">{t.thankYouDesc}</p>
                         </div>
-                        <div className="grid md:grid-cols-2 gap-12 items-start">
-                            <div className="space-y-8">
-                                {settings.pdfConfig.url && (
-                                    <GlassCard className="border-l-4 border-l-[var(--accent)]">
-                                        <h3 className="font-sans font-bold text-2xl text-[var(--primary)] mb-2 tracking-normal">विशेष साहित्य</h3>
-                                        <p className="text-[var(--text-body)] mb-6 text-base tracking-normal">Dr. Vishal यांनी तयार केलेली descriptive pattern guide डाउनलोड करा.</p>
-                                        <a href={settings.pdfConfig.url} target="_blank" className="flex items-center justify-center w-full py-4 bg-[var(--primary)] text-white hover:bg-slate-800 transition-colors rounded text-base tracking-normal font-bold"><Download size={18} className="mr-2"/> PDF डाउनलोड करा</a>
-                                    </GlassCard>
-                                )}
-                                <div>
-                                    <h3 className="font-bold text-xl text-[var(--primary)] mb-4 flex items-center gap-2 tracking-normal"><Video size={20} className="text-[var(--accent)]"/> {t.watchFirst}</h3>
-                                    <CustomVideoPlayer videoSource={settings.videoConfig} />
-                                </div>
-                            </div>
+                        
+                        <div className="max-w-3xl mx-auto">
+                            {settings.pdfConfig.url && (
+                                <GlassCard className="border-l-4 border-l-[var(--accent)] mb-12">
+                                    <h3 className="font-sans font-bold text-2xl text-[var(--primary)] mb-2 tracking-normal">विशेष साहित्य</h3>
+                                    <p className="text-[var(--text-body)] mb-6 text-base tracking-normal">Dr. Vishal यांनी तयार केलेली descriptive pattern guide डाउनलोड करा.</p>
+                                    <a href={settings.pdfConfig.url} target="_blank" className="flex items-center justify-center w-full py-4 bg-[var(--primary)] text-white hover:bg-slate-800 transition-colors rounded text-base tracking-normal font-bold"><Download size={18} className="mr-2"/> PDF डाउनलोड करा</a>
+                                </GlassCard>
+                            )}
+
                             <div>
                                 <h3 className="font-bold text-xl text-[var(--primary)] mb-6 tracking-normal">{t.nextSteps}</h3>
                                 <div className="space-y-6">
