@@ -155,7 +155,7 @@
         };
 
         const GlassCard = ({ children, className = "" }) => ( <div className={`glass-panel rounded-lg p-4 md:p-6 hover:shadow-lg transition-all duration-500 ${className}`}>{children}</div> );
-        const SectionHeader = ({ title, subtitle, align = "center", light = false }) => ( <div className={`mb-12 ${align === 'center' ? 'text-center' : 'text-left'}`}><h2 className={`text-3xl md:text-4xl font-serif font-bold mb-3 ${light ? 'text-white' : 'text-[var(--primary)]'}`}>{title}</h2><div className={`h-1 w-16 bg-[var(--accent)] mb-3 ${align === 'center' ? 'mx-auto' : ''}`}></div>{subtitle && <p className={`font-light text-lg ${light ? 'text-slate-300' : 'text-[var(--text-body)]'}`}>{subtitle}</p>}</div> );
+        const SectionHeader = ({ title, subtitle, align = "center", light = false }) => ( <div className={`mb-12 ${align === 'center' ? 'text-center' : 'text-left'}`}><h2 className={`text-4xl md:text-5xl font-serif font-bold mb-3 ${light ? 'text-white' : 'text-[var(--primary)]'}`}>{title}</h2><div className={`h-1 w-16 bg-[var(--accent)] mb-3 ${align === 'center' ? 'mx-auto' : ''}`}></div>{subtitle && <p className={`font-light text-lg ${light ? 'text-slate-300' : 'text-[var(--text-body)]'}`}>{subtitle}</p>}</div> );
         
         const TestimonialCard = ({ testimonial }) => (
             <div className="bg-white rounded-xl p-5 shadow-md border border-slate-100 hover:shadow-lg transition-all">
