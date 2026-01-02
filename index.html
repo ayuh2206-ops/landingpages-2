@@ -223,10 +223,18 @@
                     if (!passkeyInput.trim()) return alert("Enter a valid passkey");
                     try {
                         await firestoreFuncs.setDoc(getSettingsDoc(), { adminPasskey: passkeyInput.trim() }, { merge: true });
-                        setIsAdmin(true); setShowLogin(false); fetchLeads();
+                        setIsAdmin(true); 
+                        setShowLogin(false); 
+                        setCurrentPage('admin');
+                        fetchLeads();
                     } catch(e) { alert("Setup failed: " + e.message); }
                 } else {
-                    if (passkeyInput === settings.adminPasskey) { setIsAdmin(true); setShowLogin(false); fetchLeads(); }
+                    if (passkeyInput === settings.adminPasskey) { 
+                        setIsAdmin(true); 
+                        setShowLogin(false); 
+                        setCurrentPage('admin');
+                        fetchLeads(); 
+                    }
                     else { alert("Invalid Passkey"); }
                 }
             };
@@ -362,11 +370,11 @@
             };
 
             const AdminPanel = () => (
-                <div className="min-h-screen bg-slate-50">
+                <div style={{'--primary': settings.theme.primary, '--accent': settings.theme.accent}} className="min-h-screen bg-slate-50">
                     <div className="w-full bg-white p-4 md:p-6 overflow-y-auto">
                         <div className="flex justify-between items-center mb-6 pb-4 border-b-2 border-slate-200">
                             <h2 className="text-2xl font-bold text-slate-900">Admin Console (English)</h2>
-                            <button onClick={() => setIsAdmin(false)} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2"><Lock size={16}/> Logout</button>
+                            <button onClick={() => { setIsAdmin(false); setCurrentPage('landing'); }} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2"><Lock size={16}/> Logout</button>
                         </div>
                         <div className="space-y-8">
                             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -437,6 +445,8 @@
                 </div>
             );
 
+            if (isAdmin) return <AdminPanel />;
+
             if (currentPage === 'thankyou') return (
                 <div style={{'--primary': settings.theme.primary, '--accent': settings.theme.accent}} className="min-h-screen bg-warm flex flex-col relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-2 bg-[var(--accent)] z-10"></div>
@@ -501,7 +511,7 @@
                             </div>
                         )}
                     </div>
-                    {isAdmin && <AdminPanel />}
+
                     {!isAdmin && ( <button onClick={() => setShowLogin(true)} className="fixed bottom-4 right-4 p-2 text-slate-300 hover:text-slate-400 transition-colors"><Lock size={16} /></button> )}
                 </div>
             );
@@ -666,7 +676,7 @@
                         </div>
                     </footer>
 
-                    {isAdmin && <AdminPanel />}
+
                     {!isAdmin && showLogin && (
                         <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4">
                             <div className="bg-white p-6 rounded max-w-sm w-full">
