@@ -93,9 +93,9 @@
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect, useRef } from 'react';
         import { createRoot } from 'react-dom/client';
-        import { CheckCircle, Send, Download, ShieldCheck, Lock, Unlock, Star, Zap, Target, Book, Brain, FileText, Instagram, Trash2, Edit2, Home, MapPin, HelpCircle, TrendingUp, Plus, Award, Briefcase, RefreshCw, FileDown } from 'lucide-react';
+        import { CheckCircle, Send, Download, ShieldCheck, Lock, Unlock, Star, Zap, Target, Book, Brain, FileText, Instagram, Trash2, Edit2, Home, MapPin, HelpCircle, TrendingUp, Plus, Award, Briefcase, RefreshCw, FileDown, X, Check } from 'lucide-react';
         
-        // Version: 2.0.1 - Fixed icon imports
+        // Version: 2.0.2 - Red text fix + Table format leads
         let db = null; let auth = null; let firestoreFuncs = {};
         
         const APP_ID = 'dnyanjyoti_v2';
@@ -105,7 +105,8 @@
 
         const t = {
             heroSubtitle: "Our students have already proven it.",
-            heroTitle1: "Who says 120+ Marks Are Not Possible?",
+            heroTitle1: "Who says 120+ Marks",
+            heroTitle2: "Are Not Possible?",
             
             heroDesc: [
                 "MPSC Rajyaseva Prelims 2026",
@@ -185,6 +186,8 @@
             const [leads, setLeads] = useState([]);
             const [testimonials, setTestimonials] = useState([]);
             const [showTestimonialForm, setShowTestimonialForm] = useState(false);
+            const [editingLeadId, setEditingLeadId] = useState(null);
+            const [editData, setEditData] = useState({ name: '', phone: '', email: '' });
 
             const getLeadsCollection = () => firestoreFuncs.collection(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION);
             const getSettingsDoc = () => firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', 'config', SETTINGS_DOC_ID);
@@ -269,13 +272,33 @@
                 }
             };
 
+            const startEditing = (lead) => {
+                setEditingLeadId(lead.id);
+                setEditData({ name: lead.name, phone: lead.phone, email: lead.email });
+            };
+
+            const cancelEditing = () => {
+                setEditingLeadId(null);
+                setEditData({ name: '', phone: '', email: '' });
+            };
+
+            const saveEdit = async (id) => {
+                try {
+                    await firestoreFuncs.updateDoc(firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION, id), editData);
+                    setEditingLeadId(null);
+                    setEditData({ name: '', phone: '', email: '' });
+                    fetchLeads();
+                } catch (e) {
+                    alert("Failed to update: " + e.message);
+                }
+            };
+
             const exportToCSV = () => {
                 if (leads.length === 0) {
                     alert("No leads to export");
                     return;
                 }
                 
-                // Create CSV content
                 const headers = ['Name', 'Phone', 'Email', 'Date', 'Source'];
                 const rows = leads.map(lead => [
                     lead.name || '',
@@ -285,13 +308,11 @@
                     lead.source || 'web_v2_premium_en'
                 ]);
                 
-                // Combine headers and rows
                 const csvContent = [
                     headers.join(','),
                     ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
                 ].join('\n');
                 
-                // Create and download file
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 const url = URL.createObjectURL(blob);
@@ -301,50 +322,6 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-            };
-
-            const LeadItem = ({ lead, onDelete, onUpdate }) => {
-                const [isEditing, setIsEditing] = useState(false);
-                const [editData, setEditData] = useState({ name: lead.name, phone: lead.phone, email: lead.email });
-                
-                const handleSave = async () => {
-                    try {
-                        await firestoreFuncs.updateDoc(firestoreFuncs.doc(db, 'artifacts', APP_ID, 'public', 'data', LEADS_COLLECTION, lead.id), editData);
-                        setIsEditing(false);
-                        onUpdate();
-                    } catch (e) {
-                        alert("Failed to update: " + e.message);
-                    }
-                };
-
-                if (isEditing) {
-                    return (
-                        <div className="p-3 border-b border-slate-100 last:border-0 bg-blue-50 space-y-2">
-                            <input type="text" value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} className="w-full p-1.5 border rounded text-sm" placeholder="Name" />
-                            <input type="tel" value={editData.phone} onChange={(e) => setEditData({...editData, phone: e.target.value})} className="w-full p-1.5 border rounded text-sm" placeholder="Phone" />
-                            <input type="email" value={editData.email} onChange={(e) => setEditData({...editData, email: e.target.value})} className="w-full p-1.5 border rounded text-sm" placeholder="Email" />
-                            <div className="flex gap-2 pt-1">
-                                <button onClick={handleSave} className="flex-1 bg-green-500 text-white py-1.5 rounded text-xs font-medium">Save</button>
-                                <button onClick={() => setIsEditing(false)} className="px-3 py-1.5 text-slate-500 text-xs">Cancel</button>
-                            </div>
-                        </div>
-                    );
-                }
-
-                return (
-                    <div className="p-3 border-b border-slate-100 last:border-0 hover:bg-white text-sm group">
-                        <div className="flex justify-between items-start">
-                            <div className="font-bold text-slate-700">{lead.name}</div>
-                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onClick={() => setIsEditing(true)} className="text-blue-400 hover:text-blue-600 p-1"><Edit2 size={12}/></button>
-                                <button onClick={() => onDelete(lead.id)} className="text-red-400 hover:text-red-600 p-1"><Trash2 size={12}/></button>
-                            </div>
-                        </div>
-                        <div className="text-slate-500 text-xs">{lead.phone}</div>
-                        <div className="text-slate-400 text-xs">{lead.email}</div>
-                        <div className="text-slate-300 text-xs mt-1">{new Date(lead.registeredAt).toLocaleDateString()}</div>
-                    </div>
-                );
             };
 
             const TestimonialForm = ({ onSave, onCancel }) => {
@@ -369,6 +346,114 @@
                     </div>
                 );
             };
+
+            const LeadsTable = () => (
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className="bg-slate-100 border-b border-slate-200">
+                                <th className="text-left py-3 px-4 font-semibold text-slate-600">#</th>
+                                <th className="text-left py-3 px-4 font-semibold text-slate-600">Name</th>
+                                <th className="text-left py-3 px-4 font-semibold text-slate-600">Phone</th>
+                                <th className="text-left py-3 px-4 font-semibold text-slate-600">Email</th>
+                                <th className="text-left py-3 px-4 font-semibold text-slate-600">Date</th>
+                                <th className="text-center py-3 px-4 font-semibold text-slate-600">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {leads.length === 0 ? (
+                                <tr>
+                                    <td colSpan="6" className="text-center py-8 text-slate-400">No leads yet.</td>
+                                </tr>
+                            ) : (
+                                leads.map((lead, index) => (
+                                    <tr key={lead.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                        <td className="py-3 px-4 text-slate-400">{index + 1}</td>
+                                        <td className="py-3 px-4">
+                                            {editingLeadId === lead.id ? (
+                                                <input 
+                                                    type="text" 
+                                                    value={editData.name} 
+                                                    onChange={(e) => setEditData({...editData, name: e.target.value})}
+                                                    className="w-full px-2 py-1 border border-blue-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                                />
+                                            ) : (
+                                                <span className="font-medium text-slate-700">{lead.name}</span>
+                                            )}
+                                        </td>
+                                        <td className="py-3 px-4">
+                                            {editingLeadId === lead.id ? (
+                                                <input 
+                                                    type="tel" 
+                                                    value={editData.phone} 
+                                                    onChange={(e) => setEditData({...editData, phone: e.target.value})}
+                                                    className="w-full px-2 py-1 border border-blue-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                                />
+                                            ) : (
+                                                <span className="text-slate-600">{lead.phone}</span>
+                                            )}
+                                        </td>
+                                        <td className="py-3 px-4">
+                                            {editingLeadId === lead.id ? (
+                                                <input 
+                                                    type="email" 
+                                                    value={editData.email} 
+                                                    onChange={(e) => setEditData({...editData, email: e.target.value})}
+                                                    className="w-full px-2 py-1 border border-blue-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                                />
+                                            ) : (
+                                                <span className="text-slate-500">{lead.email}</span>
+                                            )}
+                                        </td>
+                                        <td className="py-3 px-4 text-slate-400 text-xs">
+                                            {new Date(lead.registeredAt).toLocaleDateString()}
+                                        </td>
+                                        <td className="py-3 px-4">
+                                            <div className="flex items-center justify-center gap-1">
+                                                {editingLeadId === lead.id ? (
+                                                    <>
+                                                        <button 
+                                                            onClick={() => saveEdit(lead.id)} 
+                                                            className="p-1.5 bg-green-100 text-green-600 rounded hover:bg-green-200 transition-colors"
+                                                            title="Save"
+                                                        >
+                                                            <Check size={14}/>
+                                                        </button>
+                                                        <button 
+                                                            onClick={cancelEditing} 
+                                                            className="p-1.5 bg-slate-100 text-slate-500 rounded hover:bg-slate-200 transition-colors"
+                                                            title="Cancel"
+                                                        >
+                                                            <X size={14}/>
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button 
+                                                            onClick={() => startEditing(lead)} 
+                                                            className="p-1.5 bg-blue-50 text-blue-500 rounded hover:bg-blue-100 transition-colors"
+                                                            title="Edit"
+                                                        >
+                                                            <Edit2 size={14}/>
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleDeleteLead(lead.id)} 
+                                                            className="p-1.5 bg-red-50 text-red-500 rounded hover:bg-red-100 transition-colors"
+                                                            title="Delete"
+                                                        >
+                                                            <Trash2 size={14}/>
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            );
 
             const AdminPanel = () => {
                 try {
@@ -403,12 +488,9 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div className="bg-slate-50 rounded-lg border border-slate-200 overflow-y-auto" style={{maxHeight: "400px"}}>
-                                    {leads.length===0 ? <p className="p-4 text-xs text-slate-400 text-center">No leads yet.</p> : leads.map(l => (
-                                        <LeadItem key={l.id} lead={l} onDelete={handleDeleteLead} onUpdate={fetchLeads} />
-                                    ))}
+                                <div className="bg-white rounded-lg border border-slate-200 overflow-hidden" style={{maxHeight: "500px", overflowY: "auto"}}>
+                                    <LeadsTable />
                                 </div>
-                                {leads.length > 0 && <p className="text-xs text-slate-400 mt-2 text-center">Hover over a lead to edit or delete</p>}
                             </div>
                             <div className="bg-white rounded-lg border border-slate-200 p-6">
                                 <div className="flex justify-between items-center mb-4">
@@ -549,7 +631,7 @@
                             <div className="animate-fade-up order-1 md:order-1 relative z-10">
                                 <h1 className="text-5xl md:text-7xl font-black text-[var(--primary)] leading-[1.1] mb-4" style={{ fontFamily: '"Bookman Old Style", serif' }}>
                                     {t.heroTitle1} <br/>
-                                    <span className="text-red-600 italic">{t.heroTitle2}</span>
+                                    <span className="text-red-600">{t.heroTitle2}</span>
                                 </h1>
                                 <p className="text-[var(--primary)] font-semibold tracking-wide uppercase text-sm mb-6 flex items-center gap-2">
                                     <CheckCircle size={16} className="text-[var(--accent)]" />
