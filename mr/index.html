@@ -624,30 +624,29 @@ src="https://www.facebook.com/tr?id=989461295169119&ev=PageView
 
             return (
                 <div style={{'--primary': settings.theme.primary, '--accent': settings.theme.accent}} className="min-h-screen font-sans selection:bg-[var(--accent)] selection:text-white">
-                    <nav className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all shadow-sm"><div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center"><div className="font-serif font-bold text-2xl tracking-normal text-[var(--primary)]">Dnyanjyoti<span className="text-[var(--accent)]">.</span></div><div className="flex items-center gap-6"><button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="hidden md:block px-6 py-2 bg-[var(--primary)] text-white text-lg font-semibold tracking-normal uppercase hover:bg-slate-800 transition-colors rounded">{t.secureSpot}</button></div></div></nav>
+                    <nav className="fixed top-0 w-full z-40 bg-white/90 backdrop-blur-md border-b border-slate-100 transition-all shadow-sm"><div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex justify-between items-center"><div className="font-serif font-bold text-lg md:text-2xl tracking-normal text-[var(--primary)]">Dnyanjyoti<span className="text-[var(--accent)]">.</span></div><div className="flex items-center gap-6"><button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="px-3 md:px-6 py-2 bg-[var(--primary)] text-white text-xs md:text-lg font-semibold tracking-normal uppercase hover:bg-slate-800 transition-colors rounded">{t.secureSpot}</button></div></div></nav>
                     
-                    <header className="relative pt-32 pb-16 md:pt-44 md:pb-24 px-6 overflow-hidden bg-gradient-to-br from-[var(--warm)] via-white to-white">
+                    <header className="relative pt-24 pb-12 md:pt-44 md:pb-24 px-4 md:px-6 overflow-hidden bg-gradient-to-br from-[var(--warm)] via-white to-white">
                         <div className="absolute inset-0 bg-pattern-dots opacity-30 pointer-events-none"></div>
-                        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+                        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
                             <div className="animate-fade-up order-1 md:order-1 relative z-10">
-                                <h1 className="hero-title text-5xl md:text-7xl font-black text-[var(--primary)] leading-normal mb-4 tracking-normal">
-                                    {t.heroTitle1} <br/>
-                                    <span className="text-red-600">{t.heroTitle2}</span>
+                                <h1 className="hero-title text-[2.5rem] leading-[1.15] sm:text-5xl md:text-7xl font-black text-[var(--primary)] mb-3 md:mb-4 tracking-normal">
+                                    {t.heroTitle1} <span className="text-red-600">{t.heroTitle2}</span>
                                 </h1>
-                                <p className="text-[var(--primary)] font-semibold tracking-normal uppercase text-base md:text-lg mb-6 flex items-center gap-2">
-                                    <CheckCircle size={18} className="text-[var(--accent)]" />
+                                <p className="text-[var(--primary)] font-semibold tracking-normal uppercase text-xs sm:text-base md:text-lg mb-4 md:mb-6 flex items-center gap-2">
+                                    <CheckCircle size={16} className="text-[var(--accent)] shrink-0" />
                                     {t.heroSubtitle}
                                 </p>
-                                <ul className="text-[var(--text-body)] text-xl md:text-2xl font-normal leading-relaxed mb-8 max-w-lg border-l-2 border-[var(--accent)] pl-6 space-y-3">
+                                <ul className="text-[var(--text-body)] text-base sm:text-xl md:text-2xl font-normal leading-relaxed mb-6 md:mb-8 max-w-lg border-l-2 border-[var(--accent)] pl-4 md:pl-6 space-y-2 md:space-y-3">
                                     {t.heroDesc.map((item, i) => (
-                                        <li key={i} className="flex items-center gap-3 tracking-normal">
-                                            <span className="w-2 h-2 rounded-full bg-[var(--accent)]"></span>
-                                            {item}
+                                        <li key={i} className="flex items-start gap-2 md:gap-3 tracking-normal">
+                                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[var(--accent)] mt-2 shrink-0"></span>
+                                            <span>{item}</span>
                                         </li>
                                     ))}
                                 </ul>
                                 <div className="flex flex-col gap-4">
-                                    <button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="px-8 py-4 bg-[var(--accent)] text-white text-xl tracking-normal uppercase font-bold hover:brightness-110 transition-all rounded shadow-lg shadow-orange-100 hover:shadow-xl transform hover:-translate-y-0.5 w-fit">{t.secureSpot}</button>
+                                    <button onClick={() => document.getElementById('register').scrollIntoView({behavior:'smooth'})} className="px-6 sm:px-8 py-3.5 sm:py-4 bg-[var(--accent)] text-white text-base sm:text-xl tracking-normal uppercase font-bold hover:brightness-110 transition-all rounded-lg shadow-lg shadow-orange-200 hover:shadow-xl transform hover:-translate-y-0.5 w-full sm:w-fit text-center">{t.secureSpot}</button>
                                     
                                 </div>
                             </div>
